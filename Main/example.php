@@ -7,5 +7,6 @@
 </head>
 <body>
     <p>Hello World!</p>
+    <p>This is an example of how to commit an update on a new branch!</p>
 </body>
 </html>
