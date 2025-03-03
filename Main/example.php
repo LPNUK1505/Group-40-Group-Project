@@ -9,6 +9,6 @@
     <p>Hello World!</p>
     <p>This is an example of how to commit an update on a new branch!</p>
     <p>Group Project meeting today, make sure you attend!</p>
-    <p> hello me</p>
+    <p>hello you!</p>
 </body>
 </html>
