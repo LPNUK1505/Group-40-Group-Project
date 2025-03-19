@@ -101,11 +101,48 @@
     
     background-color: #022340;
     z-index: 100530643;
+
+    font-family:Verdana, Tahoma, sans-serif
 }
 
 .main-content h1{
-    text-align: left;
-    font-size: 20px;
+    text-align: center;
+    font-size: 40px;
     color: #F2F2F2;
     cursor: pointer;
+}
+
+.main-content p{
+    text-align: center;
+    font-size: 20px;
+    color: #f2f2f2;
+    font:600;
+    line-height: normal;
+}
+
+.main-content h3{
+    text-align: center;
+    font-size: 28px;
+    color: #f2f2f2;
+    font:600;
+}
+
+.main-content ol{
+    text-align: center;
+    font-size: 20px;
+    color: #f2f2f2;
+    font:600;
+}
+
+.main-content a{
+    background-color: #03588C;
+    color: #F2F2F2;
+    text-align: center;
+    font-size: 18px;
+    width: 250px;
+    display: flex;
+    padding: 10px;
+    display: block;
+    margin: auto;
+    text-decoration: none;
 }
