@@ -140,6 +140,15 @@
     font:600;
 }
 
+.main-content table, th, td{
+    border: 1px solid white;
+    border-collapse: collapse;
+    color: #F2F2F2;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .main-content a{
     background-color: #03588C;
     color: #F2F2F2;
