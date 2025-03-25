@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+   <!-- JAVA line for 'fontawesome' icons -->
+   <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
+   <link rel="stylesheet" href="../styles.css">
+
+
+   <!-- Creates the Header at the top -->
+   <div class="header">
+       <div class="header-menu-icon">
+           <i class="fa-solid fa-bars"></i>
+       </div>
+
+       <!-- Creates icons for the right hand side of the header -->
+       <div class="header-right-icon">
+            <a href="SettingsPersonal.html">
+                <i class="fa-solid fa-gear"></i> 
+            </a>
+           <i class="fa-solid fa-user-large"></i>
+       </div>
+   </div>
+   
+
+   <!-- Creates the Sidebar on the left hand side -->
+   <div class="sidebar">
+       <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
+
+       <!-- Creates buttons in the Sidebar -->
+       <a href="#Option 1">Option 1</a>
+       <a href="#Option 2">Option 2</a>
+       <a href="#Option 3">Option 3</a>
+       <a href="#Option 4">Option 4</a>
+   </div>
+
+
+   <!-- Creates the Footer at the bottom -->
+   <div class="footer">
+
+       <!-- Creates buttons in the footer -->
+       <a href="AboutUs.html">About Us</a>
+       <a href="#">Contact Us</a>
+   </div>
+
+
+   <!-- Creates Main Content area -->
+   <div class="main-content">
+        <form>
+            <style>
+                form{
+                    text-align: center;
+                }
+
+                button {
+                    background-color: #F2F2F2;
+                    color: #333;
+                    padding: 25px;
+                    width: auto;
+                    border: 2px solid #333;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-size: 28px;
+                    font-family:Verdana, Tahoma, sans-serif
+                }
+
+                input, textarea {
+                    width: auto;
+                    padding: 10px 10px 10px 45px;
+                    color: #333;
+                    border: 2px solid #333;
+                    border-radius: 50px;
+                    margin: 10px 33px;
+                    font-size: 26px;
+                    margin-bottom: 20px;
+                    font-family:Verdana, Tahoma, sans-serif;
+                    resize: none;
+                }
+
+                .name_fields {
+                    display: flex;
+                }
+
+                .name_group {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    margin: 10px 33px;
+                }
+
+                label{
+                    text-align: left;
+                    margin-left: 50px;
+                }
+
+                .name_group i{
+                    position: absolute;
+                    left: 50px;
+                    top: 50%;
+                    font-size: 24px;
+                    color: #022340;
+                }
+
+                .email_group {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    margin: 10px 33px;
+                }
+
+                .email_group i{
+                    position: absolute;
+                    left: 50px;
+                    top: 50%;
+                    font-size: 24px;
+                    color: #022340;
+                }
+
+                .description_group {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    margin: 10px 33px;
+                }
+
+                .description_group i{
+                    position: absolute;
+                    left: 50px;
+                    top: 50%;
+                    font-size: 24px;
+                    color: #022340;
+                }
+
+            </style>
+
+            <h1><b>Contact Us</b></h1>
+            <p><b >We'd love to hear from you! Contact us and we'll get back to you as soon as possible.</b></p>
+
+            <h3>
+                <div class="name_fields">
+                    <div class="name_group">
+                        <label for="Firstname">*First Name</label>
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="Firstname" name="Firstname" required>
+                    </div>
+                    <div class="name_group">
+                        <label for="Surname">*Surname</label>
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="Surname" name="Surname" required>
+                    </div>
+                </div>
+
+                <div class="email_group">
+                    <label for="Email">*Email</label>
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="text" id="Email" name="Email"><br><br>
+                </div>
+
+                <div class="description_group">
+                    <label for="Description">What can we help you with?</label>
+                    <i class="fa-solid fa-file-lines"></i>
+                    <textarea name="Description" rows="4"></textarea>
+                </div>
+
+
+                <button type="submit">Send Email</button>
+            </h3>
+        </form>
+   </div>
+
+    <!-- JAVA script to change colour of sidebar button referring to active page-->
+    <!-- REQUIRES a class to be added to the active button-CHECK SettingsPersonal.html for an example-->
+    <script src="../Main/sidebar.js"></script>
+    <script>
+        window.onload = preventPageRefresh;
+    </script>
+</html>
