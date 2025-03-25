@@ -1,0 +1,169 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% - 250px);
+    height: 100px;
+    left: 250px;
+    background-color: #024873;
+    color: white;
+    text-align: center;
+    z-index: 1000;
+}
+
+.header-menu-icon {
+    font-size: 50px;
+    color: #F2F2F2;
+    cursor: pointer;
+}
+
+.header-right-icon {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.header-right-icon i {
+    font-size: 50px;
+    color: #F2F2F2;
+    cursor: pointer;
+}
+
+.goikon-logo {
+    position: absolute;
+    top: 20px;
+    left: 50px;
+    width: 150px;
+    height: auto;
+    z-index: 10000;
+    border: 3px solid white;
+    border-radius: 20px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #024873;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 180px;
+    gap: 15px;
+}
+
+.sidebar-button {
+    background: none;
+    padding: 0;
+}
+
+.sidebar-button a{
+    display: block;
+    background-color: #03588C;
+    color: #F2F2F2;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 24px;
+    width: 230px;
+    display: flex;
+    padding: 10px 0;
+    display: block;
+    border: 3px solid white;
+    border-radius: 50px;
+}
+
+.sidebar-button a.active {
+    background-color: #0271A1;
+}
+
+.sidebar-button a:hover {
+    background-color: #0271A1;
+}
+
+.sidebar i{
+    text-align: center;
+    color: #f2f2f2;
+    margin-right: 10px;
+}
+
+.footer {
+    position: fixed;
+    left: 250px;
+    width: calc(100vw - 250px);
+    bottom: 0;
+    background-color: #044D8C;
+    text-align: center;
+    padding: 20px;
+    z-index: -1000;
+}
+
+.footer a {
+    text-align: center;
+    color: #F2F2F2;
+    font-size: 18px;
+    line-height: 24px;
+    margin: 10px;
+}
+
+.main-content {
+    position: fixed;
+    align-content: left;
+    top: 100px;
+    left: 250px;
+
+    /* Sidebar is 250px */
+    width: calc(100vw - 250px);
+    /* Header is 100px and footer is 64px */
+    height: calc(100vh - 164px);
+    
+    background-color: #022340;
+    z-index: 100530643;
+    font-family:Verdana, Tahoma, sans-serif
+}
+
+.main-content h1{
+    font-size: 40px;
+    color: #F2F2F2;
+}
+
+.main-content p{
+    font-size: 20px;
+    color: #f2f2f2;
+    font:600;
+    line-height: normal;
+}
+
+.main-content h3{
+    font-size: 28px;
+    color: #f2f2f2;
+    font:600;
+}
+
+.main-content ol{
+    font-size: 20px;
+    color: #f2f2f2;
+    font:600;
+}
+
+.main-content a{
+    background-color: #03588C;
+    color: #F2F2F2;
+    text-align: center;
+    font-size: 18px;
+    width: 250px;
+    display: flex;
+    padding: 10px;
+    display: block;
+    margin: auto;
+    text-decoration: none;
+}
