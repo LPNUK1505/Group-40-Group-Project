@@ -2,7 +2,7 @@
  <html>
     <!-- JAVA line for 'fontawesome' icons -->
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
 
 
     <!-- Creates the Header at the top -->
@@ -21,7 +21,7 @@
 
     <!-- Creates the Sidebar on the left hand side -->
     <div class="sidebar">
-        <img src="Goikon Logo.png" alt="Goikon Logo" class = "goikon-logo">
+        <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
 
         <!-- Creates buttons in the Sidebar -->
         <a href="#Option 1">Dashboard</a>
