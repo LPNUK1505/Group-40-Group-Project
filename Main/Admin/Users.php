@@ -2,8 +2,7 @@
  <html>
     <!-- JAVA line for 'fontawesome' icons -->
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="styles.css">
-
+    <link rel="stylesheet" href="../styles.css">
 
     <!-- Creates the Header at the top -->
     <div class="header">
@@ -21,9 +20,9 @@
 
     <!-- Creates the Sidebar on the left hand side -->
     <div class="sidebar">
-        <img src="Goikon Logo.png" alt="Goikon Logo" class = "goikon-logo">
-
-        <!-- Creates buttons in the Sidebar -->
+    <a href="Admin/Dashboard.php">
+    <img src="../Goikon Logo.png" alt="Goikon Logo" class = "goikon-logo">
+    </a>        <!-- Creates buttons in the Sidebar -->
         <a href="#Option 1">Dashboard</a>
         <a href="#Option 2">Users</a>
         <a href="#Option 3">Teams</a>
