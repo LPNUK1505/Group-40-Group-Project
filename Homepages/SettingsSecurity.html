@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+   <!-- JAVA line for 'fontawesome' icons -->
+   <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
+   <link rel="stylesheet" href="../styles.css">
+
+
+   <!-- Creates the Header at the top -->
+   <div class="header">
+
+       <!-- Creates icons for the right hand side of the header -->
+       <div class="header-right-icon">
+            <a href="SettingsPersonal.html" class="stayOnPageLink">
+                <i class="fa-solid fa-cog fa-spin" style="--fa-animation-duration: 4s;  animation-iteration-count: 0.17;"></i>
+            </a>
+           <i class="fa-solid fa-user-large"></i>
+       </div>
+   </div>
+   
+
+   <!-- Creates the Sidebar on the left hand side -->
+   <div class="sidebar">
+        <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
+        <!-- Creates buttons in the Sidebar -->
+        <div class="sidebar-button">
+            <a href="SettingsPersonal.html">
+                <i class="fa-solid fa-user"></i>Personal Details
+            </a>
+        </div>
+        <div class="sidebar-button">
+            <a href="SettingsSecurity.html" class="stayOnPageLink">
+                <i class="fa-solid fa-unlock-keyhole"></i>Security
+            </a>
+        </div>
+   </div>
+
+   <!-- Creates the Footer at the bottom -->
+   <div class="footer">
+
+       <!-- Creates buttons in the footer -->
+       <a href="AboutUs.html">About Us</a>
+       <a href="ContactUs.html">Contact Us</a>
+   </div>
+
+
+   <!-- Creates Main Content area -->
+   <div class="main-content">
+        <form>
+            <style>
+                form{
+                    text-align: center;
+                }
+
+                input, select {
+                    width: auto;                    
+                    padding: 10px 10px 10px 45px;
+                    color: #333;
+                    border: 2px solid #333;
+                    border-radius: 50px;
+                    margin: 10px 33px;
+                    font-size: 26px;
+                    margin-bottom: 20px;
+                    font-family:Verdana, Tahoma, sans-serif;
+                    resize: none;
+                }
+                
+                input[type="date"]::-webkit-calendar-picker-indicator {
+                    position: absolute;
+                    left: 50px;
+                    font-size: 24px;
+                    color: #022340;
+                }
+
+                label{
+                    text-align: left;
+                    margin-left: 50px;
+                }
+
+                button {
+                    background-color: #F2F2F2;
+                    color: #333;
+                    padding: 25px;
+                    border: 2px solid #333;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-size: 28px;
+                    font-family:Verdana, Tahoma, sans-serif;
+                    margin-top: 10px;
+                }
+
+                .form_row {
+                    display: flex;
+                }
+
+                .password_group {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    margin: 10px 33px;
+                }
+                .password_group i{
+                    position: absolute;
+                    left: 50px;
+                    top: 50%;
+                    font-size: 24px;
+                    color: #022340;
+                }
+
+                .TwoFA_group {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    margin: 10px 33px;
+                }
+                
+                .TwoFA_group i{
+                    position: absolute;
+                    left: 50px;
+                    top: 70%;
+                    font-size: 24px;
+                    color: #f2f2f2;
+                }
+
+                .line_label {
+                    display: flex;
+                    align-items: center;
+                    margin: 10px 70px 0px 70px;
+                }
+
+                .line_label hr {
+                    flex-grow: 1;
+                    border: 0;
+                    border-top: 2px solid #03588C;
+                    margin: 0px;
+                }
+
+                .line_label span {
+                    margin: 0px 10px;
+                    font-weight: bold;
+                    color: #03588C;
+                }
+
+                .switch {
+                    position: relative;
+                    display: inline-block;
+                    width: 60px;
+                    height: 34px;
+                    margin-left: 90px;
+                    top: 12%;
+                }
+
+                .switch input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                }
+
+                .slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #ccc;
+                    -webkit-transition: .4s;
+                    transition: .4s;
+                }
+
+                .slider:before {
+                    position: absolute;
+                    content: "";
+                    height: 26px;
+                    width: 26px;
+                    left: 4px;
+                    bottom: 4px;
+                    background-color: white;
+                    -webkit-transition: .4s;
+                    transition: .4s;
+                }
+
+                input:checked + .slider {
+                    background-color: #03588C;
+                }
+
+                input:focus + .slider {
+                    box-shadow: 0 0 1px #03588C;
+                }
+
+                input:checked + .slider:before {
+                    -webkit-transform: translateX(26px);
+                    -ms-transform: translateX(26px);
+                    transform: translateX(26px);
+                }
+
+                .slider.round {
+                    border-radius: 34px;
+                }
+
+                .slider.round:before {
+                    border-radius: 50%;
+                }
+            </style>
+
+            <h1><b>Settings</b></h1>
+
+            <h3>
+                <div class="line_label">
+                    <hr>
+                    <span>Password</span>
+                    <hr>
+                </div>
+                <div class="form_row">
+                    <div class="password_group">
+                        <label for="Password">*Password</label>
+                        <i class="fa-solid fa-key"></i>
+                        <input type="text" id="Password" name="Password" required>
+                    </div>
+                    <div class="password_group">
+                        <label for="PasswordConfirm">*Confirm Password</label>
+                        <i class="fa-solid fa-key"></i>
+                        <input type="text" id="PasswordConfirm" name="PasswordConfirm" required>
+                    </div>
+                </div>
+
+                <div class="line_label">
+                    <hr>
+                    <span>2 Factor Authentication</span>
+                    <hr>
+                </div>
+                <div class="form_row">
+                    <div class="TwoFA_group">
+                        <label for="2FA">*2FA</label>
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit">Save Changes</button>
+            </h3>
+        </form>
+    </div>
+
+    <!-- JAVA script to change colour of sidebar button referring to active page-->
+    <script src="../sidebar.js"></script>
+    <script>
+        window.onload = preventPageRefresh;
+    </script>
+</html>
