@@ -7,9 +7,6 @@
 
     <!-- Creates the Header at the top -->
     <div class="header">
-        <div class="header-menu-icon">
-            <i class="fa-solid fa-bars"></i>
-        </div>
 
         <!-- Creates icons for the right hand side of the header -->
         <div class="header-right-icon">
