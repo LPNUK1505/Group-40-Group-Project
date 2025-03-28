@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="Goikon.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="5862"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="19" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="sqlite_sequence" custom_title="0" dock_id="1" table="4,15:mainsqlite_sequence"/><dock_state state="000000ff00000000fd00000001000000020000043c000002b6fc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000043c0000011800ffffff000002670000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="sqlite_sequence" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="39"/><column index="2" value="29"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">CREATE TABLE Certificate (
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="Goikon.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="5862"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="0" parent="0"/><expanded_item id="1" parent="0"/><expanded_item id="2" parent="0"/><expanded_item id="3" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="sqlite_sequence" custom_title="0" dock_id="1" table="4,15:mainsqlite_sequence"/><dock_state state="000000ff00000000fd00000001000000020000043c000002b6fc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000043c0000011800ffffff000002670000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="sqlite_sequence" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="39"/><column index="2" value="29"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">CREATE TABLE Certificate (
     CertificateID INTEGER PRIMARY KEY AUTOINCREMENT,
     Name VARCHAR NOT NULL,
     Issuer VARCHAR NOT NULL,
@@ -15,21 +15,18 @@ CREATE TABLE User (
     Password TEXT NOT NULL,
     Username TEXT NOT NULL UNIQUE,
     DateOfBirth DATE NOT NULL,
+    Nationality VARCHAR(255) NOT NULL,
+    PhoneNumber VARCHAR(255) NOT NULL,
     Email TEXT NOT NULL UNIQUE,
     FOREIGN KEY (RoleID) REFERENCES Roles(RoleID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE TeamManager (
-    ManagerID INT PRIMARY KEY,
+    ManagerID INTEGER PRIMARY KEY AUTOINCREMENT, 
     UserID INT NOT NULL,
     TeamID INT NOT NULL,
-    Firstname VARCHAR(255) NOT NULL,
-    Surname VARCHAR(255) NOT NULL,
     StartDate DATETIME NOT NULL,
     EndDate DATETIME,
-    DateOfBirth DATE NOT NULL,
-    Nationality VARCHAR(255) NOT NULL,
-    ContactInfo VARCHAR(255) NOT NULL,
     FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -45,14 +42,12 @@ CREATE TABLE TeamManager_Certificate (
 );
 
 
+
+
 CREATE TABLE Player (
-    PlayerID INT PRIMARY KEY,
+    PlayerID INTEGER PRIMARY KEY AUTOINCREMENT,
     UserID INT NOT NULL,
     TeamID INT NOT NULL,
-    Firstname VARCHAR(255) NOT NULL,
-    Surname VARCHAR(255) NOT NULL,
-    DateOfBirth DATE NOT NULL,
-    Nationality VARCHAR(255) NOT NULL,
     Goals INT DEFAULT 0,
     Assists INT DEFAULT 0,
     RedCards INT DEFAULT 0,
@@ -65,12 +60,7 @@ CREATE TABLE Player (
 CREATE TABLE Referee (
     RefereeID INTEGER PRIMARY KEY AUTOINCREMENT,
     UserID INTEGER NOT NULL,
-    Firstname TEXT NOT NULL,
-    Surname TEXT NOT NULL,
     PayPerHour INTEGER NOT NULL,
-    DateOfBirth DATE NOT NULL,
-    Nationality TEXT NOT NULL,
-    ContactInfo TEXT NOT NULL,
     FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -88,11 +78,11 @@ CREATE TABLE FieldOwner (
     FieldOwnerID INTEGER PRIMARY KEY AUTOINCREMENT,
     Firstname VARCHAR(255),
     Surname VARCHAR(255),
-    Email VARCHAR(255),
+    Email VARCHAR(255)
 );
 
 CREATE TABLE Field (
-    FieldID INT PRIMARY KEY,
+    FieldID INTEGER PRIMARY KEY AUTOINCREMENT,
     FieldOwnerID INT NOT NULL,
     Name VARCHAR(255) NOT NULL,
     PricePerHour INT NOT NULL,
@@ -100,7 +90,7 @@ CREATE TABLE Field (
     OpeningHours DATETIME,
     ClosingHours DATETIME,
     Capacity INT,
-    FOREIGN KEY (FieldOwnerID) REFERENCES FieldOwner(UserID) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (FieldOwnerID) REFERENCES FieldOwner(FieldOwnerID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -183,7 +173,6 @@ CREATE TABLE Referee_Report (
     MatchReportID INTEGER NOT NULL,
     Rating INTEGER,
     Notes VARCHAR,
-    Date DATETIME,
     FOREIGN KEY (TeamManagerID) REFERENCES Team_Manager(TeamManagerID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (MatchReportID) REFERENCES Match_Report_Log(MatchReportID) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -191,11 +180,13 @@ CREATE TABLE Referee_Report (
 CREATE TABLE Referee_Booking (
     RefBookingID INTEGER PRIMARY KEY AUTOINCREMENT,
     RefereeID INTEGER NOT NULL,
-    MatchStart DATETIME NOT NULL,
-    MatchEnd DATETIME NOT NULL,
+    LeagueMatchID INTEGER NULL,
+    FriendlyMatchID INTEGER NULL,
     Status TEXT NOT NULL CHECK(Status IN ('Scheduled', 'Completed', 'Cancelled')),
     Notes VARCHAR NULL,
-    FOREIGN KEY (RefereeID) REFERENCES Referee(RefereeID) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (RefereeID) REFERENCES Referee(RefereeID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (LeagueMatchID) REFERENCES LeagueMatch(MatchID) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (FriendlyMatchID) REFERENCES FriendlyMatch(MatchID) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE TABLE Roster (
@@ -228,4 +219,5 @@ CREATE TABLE Roles (
 
 CREATE TABLE Permissions (
     PermissionID INTEGER PRIMARY KEY AUTOINCREMENT
-);</sql><current_tab id="0"/></tab_sql></sqlb_project>
+);
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
