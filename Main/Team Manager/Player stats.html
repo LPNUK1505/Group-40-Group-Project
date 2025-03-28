@@ -2,11 +2,14 @@
  <html>
     <!-- JAVA line for 'fontawesome' icons -->
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
 
 
     <!-- Creates the Header at the top -->
     <div class="header">
+        <div class="header-menu-icon">
+            <i class="fa-solid fa-bars"></i>
+        </div>
 
         <!-- Creates icons for the right hand side of the header -->
         <div class="header-right-icon">
@@ -18,15 +21,14 @@
 
     <!-- Creates the Sidebar on the left hand side -->
     <div class="sidebar">
-        <img src="Goikon Logo.png" alt="Goikon Logo" class = "goikon-logo">
+        <img src="../GoikonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
 
         <!-- Creates buttons in the Sidebar -->
-        <a href="#Option 1">Dashboard</a>
-        <a href="#Option 2">Users</a>
-        <a href="#Option 3">Teams</a>
-        <a href="#Option 4">Matches</a>
-        <a href="#Option 4">Pitches</a>
-
+        <button type="button" onclick="location.href='Team overview.html'">Team Overview</button>
+        <button type="button" onclick="location.href='Roster Management.html'">Roster Management</button>
+        <button type="button" onclick="location.href='Match Preperation.html'">Match Preperation</button>
+        <button type="button" onclick="location.href='Upcoming Matches.html'">Upcoming Matches</button>
+        <button type="button" onclick="location.href='Player stats.html'">Player Stats</button>
     </div>
 
 
@@ -42,7 +44,7 @@
 
     <!-- Creates Main Content area -->
     <div class="main-content">
-        <h1> Main Content </h1>
+        <h1> Player Stats </h1>
 
     </div>
 </html>

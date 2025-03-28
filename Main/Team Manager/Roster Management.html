@@ -24,11 +24,11 @@
         <img src="../GoikonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
 
         <!-- Creates buttons in the Sidebar -->
-        <button type="button" href="#Option 1">Team Overview</button>
-        <button type="button" href="#Option 2">Roster Management</button>
-        <button type="button" href="#Option 3">Match Preperation</button>
-        <button type="button" href="#Option 4">Upcoming Matches</button>
-        <button type="button" href="#Option 5">Player Stats</button>
+        <button type="button" onclick="location.href='Team overview.html'">Team Overview</button>
+        <button type="button" onclick="location.href='Roster Management.html'">Roster Management</button>
+        <button type="button" onclick="location.href='Match Preperation.html'">Match Preperation</button>
+        <button type="button" onclick="location.href='Upcoming Matches.html'">Upcoming Matches</button>
+        <button type="button" onclick="location.href='Player stats.html'">Player Stats</button>
     </div>
 
 
@@ -45,6 +45,19 @@
     <!-- Creates Main Content area -->
     <div class="main-content">
         <h1> Roster Management </h1>
+        <button type="button" onclick="location.href='add player.html'">Add new player</button>
 
+        <table border="1">
+            <tr>
+                <th>Player Name</th>
+                <th>Position</th>
+                <th>Shirt Number</th>
+            </tr>
+            <tr>
+                <td>Lionel Messi</td>
+                <td>Forward</td>
+                <td>10</td>
+            </tr>
+        </table>
     </div>
 </html>
