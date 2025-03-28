@@ -129,16 +129,29 @@
     align-content: left;
     top: 100px;
     left: 250px;
-
     /* Sidebar is 250px */
     width: calc(100vw - 250px);
     /* Header is 100px and footer is 64px */
     height: calc(100vh - 164px);
-    
     background-color: #022340;
     z-index: 100530643;
+    font-family:Verdana, Tahoma, sans-serif;
+}
 
-    font-family:Verdana, Tahoma, sans-serif
+.main-content button {
+    background-color: #03588C;
+    color: #F2F2F2;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 18px;
+    width: 230px;
+    display: flex;
+    padding: 10px 0;
+    display: block;
+    border: 3px solid white;
+    border-radius: 50px;
+    margin: 0 auto;
 }
 
 .main-content h1{
@@ -190,4 +203,36 @@
     display: block;
     margin: auto;
     text-decoration: none;
+}
+
+.form-container {
+    background: #024873;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.main-content label {
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px;
+    text-align: left;
+    color: white;  /* Label text color */
+}
+
+.main_content input, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #e9f1f9;  
+    color: #333;  
 }
