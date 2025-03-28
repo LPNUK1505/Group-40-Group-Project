@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+   <!-- JAVA line for 'fontawesome' icons -->
+   <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
+   <link rel="stylesheet" href="../styles.css">
+
+
+   <!-- Creates the Header at the top -->
+   <div class="header">
+       <div class="header-menu-icon">
+           <i class="fa-solid fa-bars"></i>
+       </div>
+
+       <!-- Creates icons for the right hand side of the header -->
+       <div class="header-right-icon">
+           <i class="fa-solid fa-gear"></i>
+           <i class="fa-solid fa-user-large"></i>
+       </div>
+   </div>
+   
+
+   <!-- Creates the Sidebar on the left hand side -->
+   <div class="sidebar">
+       <img src="../GoikonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
+
+       <!-- Creates buttons in the Sidebar -->
+       <button type="button" onclick="location.href='Roster Management.html'">Back</button>
+    </div>
+
+
+   <!-- Creates the Footer at the bottom -->
+   <div class="footer">
+
+       <!-- Creates buttons in the footer -->
+   </div>
+
+
+   <!-- Creates Main Content area -->
+   <div class="main-content">
+       <h1> Add New Player </h1>
+       <div class="form-container">
+        <form method="post">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="position">Position:</label>
+            <select id="position" name="position">
+                <option value="Goalkeeper">Goalkeeper</option>
+                <option value="Defender">Defender</option>
+                <option value="Midfielder">Midfielder</option>
+                <option value="Forward">Forward</option>
+            </select>
+
+            <label for="shirt_number">Shirt Number:</label>
+            <input type="number" id="shirt_number" name="shirt_number" min="1" max="99" required>
+
+            <button type="submit">Add Player</button>
+        </form>
+    </div>
+   </div>
+</html>
