@@ -28,12 +28,12 @@
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="SettingsSecurity.html" class="stayOnPageLink">
+            <a href="SettingsSecurity.html">
                 <i class="fa-solid fa-unlock-keyhole"></i>Account Security
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="SettingsData.html">
+            <a href="SettingsData.html" class="stayOnPageLink">
                 <i class="fa-solid fa-cloud-arrow-up"></i>Manage Data
             </a>
         </div>
@@ -56,24 +56,14 @@
                     text-align: center;
                 }
 
-                input, select {
-                    width: auto;                    
-                    padding: 10px 10px 10px 45px;
+                input {
+                    padding: 10px 10px;
                     color: #333;
                     border: 2px solid #333;
                     border-radius: 50px;
                     margin: 10px 33px;
-                    font-size: 26px;
-                    margin-bottom: 20px;
+                    font-size: 16px;
                     font-family:Verdana, Tahoma, sans-serif;
-                    resize: none;
-                }
-                
-                input[type="date"]::-webkit-calendar-picker-indicator {
-                    position: absolute;
-                    left: 50px;
-                    font-size: 24px;
-                    color: #022340;
                 }
 
                 label{
@@ -90,41 +80,42 @@
                     cursor: pointer;
                     font-size: 28px;
                     font-family:Verdana, Tahoma, sans-serif;
-                    margin-top: 10px;
+                    margin-top: 20px;
                 }
 
                 .form_row {
                     display: flex;
+                    width: auto;
+                    margin: 0 300px;
+                }
+
+                .download_group {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    flex-direction: row;
+                    flex: 1;
+                    font-size: 16px;
+                    color: #f2f2f2;
                 }
 
                 .password_group {
-                    position: relative;
                     display: flex;
                     flex-direction: column;
                     flex: 1;
+                    text-align: left;
+                    font-size: 28px;
+                    color: #f2f2f2;
                     margin: 10px 33px;
-                }
-                .password_group i{
-                    position: absolute;
-                    left: 50px;
-                    top: 50%;
-                    font-size: 24px;
-                    color: #022340;
                 }
 
-                .TwoFA_group {
+                .delete_group {
                     position: relative;
                     display: flex;
-                    flex-direction: column;
+                    align-items: center;
+                    flex-direction: row;
                     flex: 1;
-                    margin: 10px 33px;
-                }
-                
-                .TwoFA_group i{
-                    position: absolute;
-                    left: 50px;
-                    top: 70%;
-                    font-size: 24px;
+                    font-size: 16px;
                     color: #f2f2f2;
                 }
 
@@ -147,106 +138,60 @@
                     color: #03588C;
                 }
 
-                .switch {
-                    position: relative;
-                    display: inline-block;
-                    width: 60px;
-                    height: 34px;
-                    margin-left: 90px;
-                    top: 12%;
-                }
-
-                .switch input {
-                    opacity: 0;
-                    width: 0;
-                    height: 0;
-                }
-
-                .slider {
-                    position: absolute;
-                    cursor: pointer;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-color: #ccc;
-                    -webkit-transition: .4s;
-                    transition: .4s;
-                }
-
-                .slider:before {
-                    position: absolute;
-                    content: "";
-                    height: 26px;
-                    width: 26px;
-                    left: 4px;
-                    bottom: 4px;
-                    background-color: white;
-                    -webkit-transition: .4s;
-                    transition: .4s;
-                }
-
-                input:checked + .slider {
-                    background-color: #03588C;
-                }
-
-                input:focus + .slider {
-                    box-shadow: 0 0 1px #03588C;
-                }
-
-                input:checked + .slider:before {
-                    -webkit-transform: translateX(26px);
-                    -ms-transform: translateX(26px);
-                    transform: translateX(26px);
-                }
-
-                .slider.round {
-                    border-radius: 34px;
-                }
-
-                .slider.round:before {
-                    border-radius: 50%;
+                .h7{
+                    text-align: center;
+                    font-size: 10px;
+                    color: #f2f2f2;
                 }
             </style>
 
-            <h1><b>Account Security</b></h1>
+            <h1><b>Manage Data</b></h1>
+            <p><b>Concerned about what data we store for you? Review your data, and correct, delete, or download it.</b></p>
 
             <h3>
                 <div class="line_label">
                     <hr>
-                    <span>Password</span>
+                    <span>Download Data</span>
                     <hr>
                 </div>
+            </h3>
+            <h7>Your data will be emailed directly to you.</h7>
+            <h3>
                 <div class="form_row">
                     <div class="password_group">
                         <label for="Password">*Password</label>
-                        <i class="fa-solid fa-key"></i>
                         <input type="text" id="Password" name="Password" required>
-                    </div>
-                    <div class="password_group">
+
                         <label for="PasswordConfirm">*Confirm Password</label>
-                        <i class="fa-solid fa-key"></i>
                         <input type="text" id="PasswordConfirm" name="PasswordConfirm" required>
+                    </div>
+
+                    <div class="download_group">
+                        <button type="submit">Download Data</button>
                     </div>
                 </div>
 
                 <div class="line_label">
                     <hr>
-                    <span>2 Factor Authentication</span>
+                    <span>Delete Data</span>
                     <hr>
                 </div>
+            </h3>
+                </h7>This action is irreversible.</h7>
+
                 <div class="form_row">
-                    <div class="TwoFA_group">
-                        <label for="2FA">*2FA</label>
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
+                    <div class="password_group">
+                        <label for="Password">*Password</label>
+                        <input type="text" id="Password" name="Password" required>
+
+                        <label for="PasswordConfirm">*Confirm Password</label>
+                        <input type="text" id="PasswordConfirm" name="PasswordConfirm" required>
+                    </div>
+
+                    <div class="delete_group">
+                        <button type="submit">Delete Data</button>
                     </div>
                 </div>
-
-                <button type="submit">Save Changes</button>
             </h3>
         </form>
     </div>

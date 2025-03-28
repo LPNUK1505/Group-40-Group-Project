@@ -3,7 +3,7 @@ function addActiveClassToSidebarLinks() {
     //Gets the end of the URL, which is the name of the active page
     const currentUrl = window.location.pathname.split('/').pop();
     const sidebarLinks = document.querySelectorAll('.sidebar-button a');
-
+    
     //Loops through links of all sidebar buttons
     sidebarLinks.forEach(sidebarLink => {
         const linkHref = sidebarLink.getAttribute('href');
