@@ -24,18 +24,6 @@
    <!-- Creates the Sidebar on the left hand side -->
    <div class="sidebar">
        <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
-
-       <!-- Creates buttons in the Sidebar -->
-       <div class="sidebar-button">
-        <a href="#Option 1">
-            <i class="fa-solid fa-gear"></i>Option 1
-        </a>
-        </div>
-        <div class="sidebar-button">
-            <a href="#Option 2">
-                <i class="fa-solid fa-gear"></i>Option 2
-            </a>
-        </div>
    </div>
 
 
@@ -49,7 +37,7 @@
    
    <div class="main-content">
     <h2>Create Account</h2>
-    <form method="post" action="CreateAccount.php" id="CreateAccount">
+    <form method="post" action="CreateAccount.php" id="create-account-form">
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <input type="text" name="Firstname" placeholder="Firstname" required>

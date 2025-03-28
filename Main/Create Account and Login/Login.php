@@ -28,17 +28,6 @@
    <div class="sidebar">
        <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
 
-       <!-- Creates buttons in the Sidebar -->
-       <div class="sidebar-button">
-        <a href="#Option 1">
-            <i class="fa-solid fa-gear"></i>Option 1
-        </a>
-        </div>
-        <div class="sidebar-button">
-            <a href="#Option 2">
-                <i class="fa-solid fa-gear"></i>Option 2
-            </a>
-        </div>
    </div>
 
 
@@ -52,7 +41,8 @@
    
    <div class="main-content">
     <h2>Login</h2>
-    <form method="post" action="Login.php">
+    <form method="post" action="Login.php" id="login-form">
+
         <input type="text" name="username" placeholder="Username" required><br>
         <input type="password" name="password" placeholder="Password" required><br>
         <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
