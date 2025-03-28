@@ -81,20 +81,10 @@
                     margin-left: 50px;
                 }
 
-                button {
-                    background-color: #F2F2F2;
-                    color: #333;
-                    padding: 25px;
-                    border: 2px solid #333;
-                    border-radius: 10px;
-                    cursor: pointer;
-                    font-size: 28px;
-                    font-family:Verdana, Tahoma, sans-serif;
-                    margin-top: 10px;
-                }
-
                 .form_row {
                     display: flex;
+                    flex-direction: row;
+                    flex: 1;
                 }
 
                 .password_group {
@@ -107,7 +97,7 @@
                 .password_group i{
                     position: absolute;
                     left: 50px;
-                    top: 50%;
+                    top: 55%;
                     font-size: 24px;
                     color: #022340;
                 }
@@ -116,16 +106,31 @@
                     position: relative;
                     display: flex;
                     flex-direction: column;
+                    align-items: start;
                     flex: 1;
                     margin: 10px 33px;
                 }
+
+                .TwoFA_group_group {
+                    position: relative;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    flex: 1;
+                    gap: 15px;
+                    width: auto;                    
+                    padding: 10px 10px 10px 15px;
+                    background-color: #f2f2f2;
+                    border: 2px solid #333;
+                    border-radius: 50px;
+                    margin: 10px 33px;
+                    font-size: 26px;
+                    margin-bottom: 20px;
+                }
                 
                 .TwoFA_group i{
-                    position: absolute;
-                    left: 50px;
-                    top: 70%;
                     font-size: 24px;
-                    color: #f2f2f2;
+                    color: #022340;
                 }
 
                 .line_label {
@@ -149,11 +154,8 @@
 
                 .switch {
                     position: relative;
-                    display: inline-block;
                     width: 60px;
                     height: 34px;
-                    margin-left: 90px;
-                    top: 12%;
                 }
 
                 .switch input {
@@ -238,11 +240,14 @@
                 <div class="form_row">
                     <div class="TwoFA_group">
                         <label for="2FA">*2FA</label>
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
+
+                        <div class="TwoFA_group_group">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 

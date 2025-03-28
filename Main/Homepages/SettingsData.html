@@ -67,20 +67,13 @@
                 }
 
                 label{
-                    text-align: left;
                     margin-left: 50px;
                 }
 
-                button {
-                    background-color: #F2F2F2;
-                    color: #333;
-                    padding: 25px;
-                    border: 2px solid #333;
-                    border-radius: 10px;
-                    cursor: pointer;
-                    font-size: 28px;
-                    font-family:Verdana, Tahoma, sans-serif;
-                    margin-top: 20px;
+                .message{
+                    text-align: center;
+                    font-size: 14px;
+                    color: #f2f2f2;
                 }
 
                 .form_row {
@@ -90,13 +83,12 @@
                 }
 
                 .download_group {
-                    position: relative;
                     display: flex;
+                    justify-content: center;
                     align-items: center;
-                    flex-direction: row;
+                    flex-direction: column;
                     flex: 1;
-                    font-size: 16px;
-                    color: #f2f2f2;
+                    gap: 5px;
                 }
 
                 .password_group {
@@ -110,13 +102,12 @@
                 }
 
                 .delete_group {
-                    position: relative;
                     display: flex;
+                    justify-content: center;
                     align-items: center;
-                    flex-direction: row;
+                    flex-direction: column;
                     flex: 1;
-                    font-size: 16px;
-                    color: #f2f2f2;
+                    gap: 5px;
                 }
 
                 .line_label {
@@ -137,12 +128,6 @@
                     font-weight: bold;
                     color: #03588C;
                 }
-
-                .h7{
-                    text-align: center;
-                    font-size: 10px;
-                    color: #f2f2f2;
-                }
             </style>
 
             <h1><b>Manage Data</b></h1>
@@ -154,9 +139,7 @@
                     <span>Download Data</span>
                     <hr>
                 </div>
-            </h3>
-            <h7>Your data will be emailed directly to you.</h7>
-            <h3>
+
                 <div class="form_row">
                     <div class="password_group">
                         <label for="Password">*Password</label>
@@ -167,7 +150,8 @@
                     </div>
 
                     <div class="download_group">
-                        <button type="submit">Download Data</button>
+                        <label class="message">Your data will be emailed directly to you.</label>
+                        <button type="submit">Download</button>
                     </div>
                 </div>
 
@@ -176,8 +160,6 @@
                     <span>Delete Data</span>
                     <hr>
                 </div>
-            </h3>
-                </h7>This action is irreversible.</h7>
 
                 <div class="form_row">
                     <div class="password_group">
@@ -189,7 +171,8 @@
                     </div>
 
                     <div class="delete_group">
-                        <button type="submit">Delete Data</button>
+                        <label class="message">This action is irreversible.</label>
+                        <button type="submit">Delete</button>
                     </div>
                 </div>
             </h3>
