@@ -236,3 +236,140 @@
     background-color: #e9f1f9;  
     color: #333;  
 }
+
+#create-account-form {
+    width: 60%; 
+    max-width: 700px; 
+    margin: 0 auto; 
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+
+#create-account-form input, 
+#create-account-form select {
+    width: 48%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+
+#create-account-form button {
+    width: 100%;
+}
+
+button {
+    background-color: #03588C;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+input, select, textarea, button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    outline: none;
+    margin-bottom: 15px;
+}
+
+button:hover {
+    background-color: #023e64;
+}
+
+h2 {
+    text-align: center;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif
+}
+
+p a {
+    color: #03588C;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+p a:hover {
+    color: #023e64;
+    text-decoration: underline;
+}
+
+
+
+.role {
+    font-family: Arial, Helvetica, sans-serif;
+   
+}
+
+
+#login-form {
+    width: 40%; 
+    max-width: 500px; 
+    margin: 0 auto; 
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+
+#login-form input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+
+#login-form button {
+    width: 100%;
+    background-color: #004080; 
+    color: white;
+    font-size: 16px;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+#login-form p {
+    text-align: center;
+    margin-top: 10px;
+}
+
+
+#login-form .create-account {
+   
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#login-form .create-account:hover {
+    text-decoration: underline;
+}
