@@ -192,11 +192,11 @@
     text-decoration: none;
 }
 
-/* Target Create Account form only */
+
 #create-account-form {
-    width: 60%; /* Adjust width */
-    max-width: 700px; /* Prevent excessive width */
-    margin: 0 auto; /* Center the form */
+    width: 60%; 
+    max-width: 700px; 
+    margin: 0 auto; 
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -207,7 +207,7 @@
     gap: 15px;
 }
 
-/* Ensure inputs are aligned */
+
 #create-account-form input, 
 #create-account-form select {
     width: 48%;
@@ -218,7 +218,7 @@
     box-sizing: border-box;
 }
 
-/* Ensure button spans full width */
+
 #create-account-form button {
     width: 100%;
 }
@@ -277,11 +277,11 @@ p a:hover {
    
 }
 
-/* Target Login Form Only */
+
 #login-form {
-    width: 40%; /* Adjust width */
-    max-width: 500px; /* Prevent excessive width */
-    margin: 0 auto; /* Center the form */
+    width: 40%; 
+    max-width: 500px; 
+    margin: 0 auto; 
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -291,7 +291,7 @@ p a:hover {
     gap: 15px;
 }
 
-/* Style login inputs */
+
 #login-form input {
     width: 100%;
     padding: 12px;
@@ -301,10 +301,10 @@ p a:hover {
     box-sizing: border-box;
 }
 
-/* Ensure button spans full width */
+
 #login-form button {
     width: 100%;
-    background-color: #004080; /* Customize button color */
+    background-color: #004080; 
     color: white;
     font-size: 16px;
     padding: 12px;
@@ -313,13 +313,13 @@ p a:hover {
     cursor: pointer;
 }
 
-/* Add spacing for the "Create Account" link */
+
 #login-form p {
     text-align: center;
     margin-top: 10px;
 }
 
-/* Style the 'Create Account' link */
+
 #login-form .create-account {
    
     text-decoration: none;
