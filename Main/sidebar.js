@@ -28,5 +28,20 @@ function preventPageRefresh(event) {
     });
 }
 
+//Limit text length in profile box
+function truncateProfileBoxText(selector, maxLength) {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach(element => {
+        if (element.textContent.length > maxLength) {
+            element.textContent = element.textContent.slice(0, maxLength) + '...';
+        }
+    });
+}
+
+//Apply truncation
+truncateProfileBoxText('.name', 30);
+truncateProfileBoxText('.role', 30);
+
 //Runs function when all Document Object Model's have loaded
+document.addEventListener('DOMContentLoaded', truncateProfileBoxText);
 document.addEventListener('DOMContentLoaded', addActiveClassToSidebarLinks);

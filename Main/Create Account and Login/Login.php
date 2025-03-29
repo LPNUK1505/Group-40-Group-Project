@@ -7,23 +7,14 @@
 
    <!-- Creates the Header at the top -->
    <div class="header">
-       <div class="header-menu-icon">
-           <i class="fa-solid fa-bars"></i>
-       </div>
 
-       <!-- Creates icons for the right hand side of the header -->
-       <div class="header-right-icon">
-            <a href="SettingsPersonal.html">
-                <i class="fa-solid fa-gear"></i> 
-            </a>
-            <i class="fa-solid fa-user-large"></i>
-       </div>
    </div>
    
 
    <!-- Creates the Sidebar on the left hand side -->
    <div class="sidebar">
        <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
+       <div class="sidebar-separator"></div>
 
    </div>
 
