@@ -472,3 +472,60 @@ p a:hover {
 #login-form .create-account:hover {
     text-decoration: underline;
 }
+
+.player-stats-table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #024873;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.player-stats-table th, .player-stats-table td {
+    padding: 12px;
+    border: 1px solid white;
+    text-align: center;
+}
+
+.player-stats-table th {
+    background-color: #03588C;
+    color: #F2F2F2;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.player-stats-table tr:nth-child(even) {
+    background-color: #0271A1;
+}
+
+.player-stats-table tr:hover {
+    background-color: #046b9d;
+    transition: 0.3s ease-in-out;
+}
+
+.player-stats-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+}
+.player-stats-navigation button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.player-stats-navigation button:hover {
+    background-color: #0056b3;
+}
+.player-stats-navigation span {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
