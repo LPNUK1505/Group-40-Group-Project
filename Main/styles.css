@@ -529,3 +529,78 @@ p a:hover {
     font-weight: bold;
     color: white;
 }
+
+
+.matches-container {
+    padding: 20px;
+    color: #F2F2F2;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.team-section {
+    margin-bottom: 30px;
+}
+
+.team-section h2 {
+    text-align: left;
+    font-size: 28px;
+    color: #F2F2F2;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #03588C;
+}
+
+.match-card {
+    background-color: #024873;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.match-card:hover {
+    transform: translateY(-3px);
+}
+
+.match-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.team {
+    flex: 1;
+    text-align: center;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.home-team {
+    text-align: right;
+}
+
+.away-team {
+    text-align: left;
+}
+
+.vs {
+    padding: 0 15px;
+    font-weight: bold;
+    color: #F2F2F2;
+}
+
+.match-details {
+    display: flex;
+    justify-content: space-around;
+    font-size: 14px;
+    color: #ccc;
+}
+
+.match-details i {
+    margin-right: 5px;
+}
+
