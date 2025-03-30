@@ -95,7 +95,7 @@ if (isset($_GET['id'])) {
             <i class="fa fa-user"></i>
             <div>
                 <div class="name">John Doe</div>
-                <div class="role">Admin</div>
+                <div class="role">Team Manager</div>
             </div>
             <i class="fa fa-chevron-down dropdown-icon"></i>
             <div class="dropdown">
