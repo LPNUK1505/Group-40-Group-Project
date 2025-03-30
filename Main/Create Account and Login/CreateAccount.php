@@ -18,7 +18,7 @@
 </div>
 
 <div class="main-content">
-    <h2>Create Account</h2>
+    <h1>Create Account</h1>
     <form action="../Team Manager/TeamOverview.html" id="create-account-form">
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>

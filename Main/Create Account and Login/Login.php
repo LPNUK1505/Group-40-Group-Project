@@ -18,7 +18,7 @@
 </div>
 
 <div class="main-content">
-    <h2>Login</h2>
+    <h1>Login</h1>
     <form action="../Team Manager/TeamOverview.html" id="login-form">
         <input type="text" name="username" placeholder="Username" required><br>
         <input type="password" name="password" placeholder="Password" required><br>

@@ -357,8 +357,7 @@
     padding-bottom: 10px;
     border-bottom: 2px solid #03588C;
 }
-
-#login-form input, 
+ 
 #create-account-form input,
 #create-account-form select {
     width: 100%;
@@ -371,6 +370,26 @@
     color: #F2F2F2;
     transition: all 0.3s ease;
 }
+#login-form input {
+    width: 100%;
+    padding: 12px 15px; /* Adjusted padding */
+    margin-bottom: 15px; /* Reduced spacing */
+    border: 2px solid #0271A1;
+    border-radius: 6px; /* Slightly smaller radius */
+    font-size: 16px;
+    background-color: #022340;
+    color: #F2F2F2;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+    height: 45px; /* Fixed height */
+    display: block; /* Ensures proper alignment */
+}
+
+/* Optional: Add focus effect */
+#login-form input:focus {
+    border-color: #03A9F4;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(3, 169, 244, 0.2);
+}
 
 #login-form input:focus, 
 #create-account-form input:focus,
@@ -380,7 +399,7 @@
     box-shadow: 0 0 5px rgba(2, 113, 161, 0.5);
 }
 
-#login-form button, 
+#login-form button , 
 #create-account-form button {
     background-color: #03588C;
     color: #F2F2F2;
@@ -407,6 +426,7 @@
     margin-top: 20px;
     color: #ccc;
 }
+
 
 #login-form .create-account, 
 #create-account-form .create-account {
