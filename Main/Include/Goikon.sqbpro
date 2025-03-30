@@ -1,223 +1,387 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="Goikon.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="5862"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="0" parent="0"/><expanded_item id="1" parent="0"/><expanded_item id="2" parent="0"/><expanded_item id="3" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="sqlite_sequence" custom_title="0" dock_id="1" table="4,15:mainsqlite_sequence"/><dock_state state="000000ff00000000fd00000001000000020000043c000002b6fc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000043c0000011800ffffff000002670000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="sqlite_sequence" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="39"/><column index="2" value="29"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">CREATE TABLE Certificate (
-    CertificateID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Name VARCHAR NOT NULL,
-    Issuer VARCHAR NOT NULL,
-    YearsActiveFor INT NULL,
-    Notes VARCHAR NULL
-);
-
-CREATE TABLE User (
-    UserID INTEGER PRIMARY KEY AUTOINCREMENT,
-    RoleID INTEGER NOT NULL,
-    AccountType TEXT NOT NULL CHECK (AccountType IN ('Admin', 'Player', 'Team Manager', 'Referee')),
-    Firstname VARCHAR(255) NOT NULL,
-    Surname VARCHAR(255) NOT NULL,
-    Password TEXT NOT NULL,
-    Username TEXT NOT NULL UNIQUE,
-    DateOfBirth DATE NOT NULL,
-    Nationality VARCHAR(255) NOT NULL,
-    PhoneNumber VARCHAR(255) NOT NULL,
-    Email TEXT NOT NULL UNIQUE,
-    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE TeamManager (
-    ManagerID INTEGER PRIMARY KEY AUTOINCREMENT, 
-    UserID INT NOT NULL,
-    TeamID INT NOT NULL,
-    StartDate DATETIME NOT NULL,
-    EndDate DATETIME,
-    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE TeamManager_Certificate (
-    ManagerID INTEGER NOT NULL,
-    CertificateID INTEGER NOT NULL,
-    IssueDate DATETIME NOT NULL,
-    ExpiryDate DATETIME NULL,
-    PRIMARY KEY (ManagerID, CertificateID),
-    FOREIGN KEY (ManagerID) REFERENCES Managers(ManagerID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (CertificateID) REFERENCES Certificate(CertificateID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-
-
-
-CREATE TABLE Player (
-    PlayerID INTEGER PRIMARY KEY AUTOINCREMENT,
-    UserID INT NOT NULL,
-    TeamID INT NOT NULL,
-    Goals INT DEFAULT 0,
-    Assists INT DEFAULT 0,
-    RedCards INT DEFAULT 0,
-    YellowCards INT DEFAULT 0,
-    Appearances INT DEFAULT 0,
-    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Referee (
-    RefereeID INTEGER PRIMARY KEY AUTOINCREMENT,
-    UserID INTEGER NOT NULL,
-    PayPerHour INTEGER NOT NULL,
-    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Referee_Certificate (
-    RefereeID INTEGER NOT NULL,
-    CertificateID INTEGER NOT NULL,
-    IssueDate DATETIME NOT NULL,
-    ExpiryDate DATETIME NULL,
-    PRIMARY KEY (RefereeID, CertificateID),
-    FOREIGN KEY (RefereeID) REFERENCES Referee(RefereeID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (CertificateID) REFERENCES Certificate(CertificateID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE FieldOwner (
-    FieldOwnerID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Firstname VARCHAR(255),
-    Surname VARCHAR(255),
-    Email VARCHAR(255)
-);
-
-CREATE TABLE Field (
-    FieldID INTEGER PRIMARY KEY AUTOINCREMENT,
-    FieldOwnerID INT NOT NULL,
-    Name VARCHAR(255) NOT NULL,
-    PricePerHour INT NOT NULL,
-    Location VARCHAR(255) NOT NULL,
-    OpeningHours DATETIME,
-    ClosingHours DATETIME,
-    Capacity INT,
-    FOREIGN KEY (FieldOwnerID) REFERENCES FieldOwner(FieldOwnerID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-
-CREATE TABLE Team (
-    TeamID INTEGER PRIMARY KEY AUTOINCREMENT,
-    LeagueID INTEGER NOT NULL,
-    ManagerID INTEGER NOT NULL,
-    FieldID INTEGER NOT NULL,
-    TeamName VARCHAR(255) NOT NULL,
-    FOREIGN KEY (LeagueID) REFERENCES League(LeagueID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (ManagerID) REFERENCES Manager(ManagerID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (FieldID) REFERENCES Field(FieldID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Maintenance (
-    MaintenanceID INTEGER PRIMARY KEY AUTOINCREMENT,
-    FieldID INTEGER NOT NULL,
-    MaintenanceType VARCHAR(255) NOT NULL,
-    StartDate DATETIME NOT NULL,
-    EndDate DATETIME NOT NULL,
-    Description VARCHAR(255),
-    Status TEXT NOT NULL,
-    FOREIGN KEY (FieldID) REFERENCES Field(FieldID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE League_Match (
-    LeagueMatchID INTEGER PRIMARY KEY AUTOINCREMENT,
-    LeagueID INTEGER NOT NULL,
-    HomeTeamID INTEGER NOT NULL,
-    AwayTeamID INTEGER NOT NULL,
-    MatchReportID INTEGER NOT NULL,
-    RefBookingID INTEGER NOT NULL,
-    MatchDate DATETIME NOT NULL,
-    Venue VARCHAR NOT NULL,
-    Status TEXT NOT NULL CHECK(Status IN ('Scheduled', 'Ongoing', 'Completed', 'Cancelled')),
-    FOREIGN KEY (LeagueID) REFERENCES League(LeagueID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (HomeTeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (AwayTeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (MatchReportID) REFERENCES MatchReport(MatchReportID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (RefBookingID) REFERENCES RefBooking(RefBookingID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Friendly_Match (
-    FriendlyMatchID INTEGER PRIMARY KEY AUTOINCREMENT,
-    FieldID INTEGER NOT NULL,
-    TeamID INTEGER NOT NULL,
-    RefBookingID INTEGER NOT NULL,
-    MatchReportID INTEGER NOT NULL,
-    OpposingTeamID INTEGER NOT NULL,
-    Time DATETIME NOT NULL,
-    Status TEXT NOT NULL CHECK(Status IN ('Scheduled', 'Ongoing', 'Completed', 'Cancelled')),
-    FOREIGN KEY (FieldID) REFERENCES Field(FieldID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (RefBookingID) REFERENCES RefBooking(RefBookingID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (MatchReportID) REFERENCES Match_Report_Log(MatchReportID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (OpposingTeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Match_Report_Log (
-    MatchReportID INTEGER PRIMARY KEY AUTOINCREMENT,
-    RefBookingID INTEGER NOT NULL,
-    FriendlyMatchID INTEGER NULL,
-    LeagueMatchID INTEGER NULL,
-    TeamID INTEGER NOT NULL,
-    PlayerID INTEGER NOT NULL,
-    PlayerNumber INTEGER NOT NULL,
-    Event TEXT NOT NULL CHECK(Event IN ('Goal', 'Yellow Card', 'Red Card', 'Substitution', 'Injury')),
-    Time INTEGER NOT NULL,
-    Reason VARCHAR NULL,
-    FOREIGN KEY (RefBookingID) REFERENCES RefBooking(RefBookingID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (FriendlyMatchID) REFERENCES Friendly_Match(FriendlyMatchID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (LeagueMatchID) REFERENCES League_Match(LeagueMatchID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Referee_Report (
-    RefereeID INTEGER PRIMARY KEY AUTOINCREMENT,
-    TeamManagerID INTEGER NOT NULL,
-    MatchReportID INTEGER NOT NULL,
-    Rating INTEGER,
-    Notes VARCHAR,
-    FOREIGN KEY (TeamManagerID) REFERENCES Team_Manager(TeamManagerID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (MatchReportID) REFERENCES Match_Report_Log(MatchReportID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Referee_Booking (
-    RefBookingID INTEGER PRIMARY KEY AUTOINCREMENT,
-    RefereeID INTEGER NOT NULL,
-    LeagueMatchID INTEGER NULL,
-    FriendlyMatchID INTEGER NULL,
-    Status TEXT NOT NULL CHECK(Status IN ('Scheduled', 'Completed', 'Cancelled')),
-    Notes VARCHAR NULL,
-    FOREIGN KEY (RefereeID) REFERENCES Referee(RefereeID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (LeagueMatchID) REFERENCES LeagueMatch(MatchID) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (FriendlyMatchID) REFERENCES FriendlyMatch(MatchID) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
-CREATE TABLE Roster (
-    RosterID INTEGER PRIMARY KEY AUTOINCREMENT,
-    LeagueMatchID INTEGER NOT NULL,
-    TeamID INTEGER NOT NULL,
-    PlayerID INTEGER NOT NULL,
-    Position VARCHAR NOT NULL,
-    ShirtNumber INTEGER NOT NULL,
-    FOREIGN KEY (LeagueMatchID) REFERENCES League_Match(LeagueMatchID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Activity (
-    ActivityLogID INTEGER PRIMARY KEY AUTOINCREMENT,
-    UserID INTEGER NOT NULL,
-    LastLogin DATETIME NULL,
-    IsActive BOOLEAN NULL,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Roles (
-    RoleID INTEGER PRIMARY KEY AUTOINCREMENT,
-    PermissionID INT NOT NULL,
-    Name VARCHAR NOT NULL,
-    Description VARCHAR NOT NULL,
-    FOREIGN KEY (PermissionID) REFERENCES Permissions(PermissionID) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE Permissions (
-    PermissionID INTEGER PRIMARY KEY AUTOINCREMENT
-);
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="Goikon.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="5765"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="Roster" custom_title="0" dock_id="4" table="4,6:mainRoster"/><dock_state state="000000ff00000000fd00000001000000020000083b00000528fc0100000002fb000000160064006f0063006b00420072006f007700730065003101000000000000083b0000000000000000fb000000160064006f0063006b00420072006f007700730065003401000000000000083b0000011e00ffffff0000083b0000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Activity" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="85"/><column index="2" value="48"/><column index="3" value="159"/><column index="4" value="55"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="League_Match" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="97"/><column index="2" value="63"/><column index="3" value="87"/><column index="4" value="85"/><column index="5" value="159"/><column index="6" value="127"/><column index="7" value="79"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Player" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="57"/><column index="2" value="48"/><column index="3" value="54"/><column index="4" value="39"/><column index="5" value="48"/><column index="6" value="62"/><column index="7" value="76"/><column index="8" value="82"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Roster" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="59"/><column index="2" value="98"/><column index="3" value="54"/><column index="4" value="58"/><column index="5" value="87"/><column index="6" value="79"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Team" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="53"/><column index="2" value="63"/><column index="3" value="72"/><column index="4" value="48"/><column index="5" value="103"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="User" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="47"/><column index="2" value="47"/><column index="3" value="103"/><column index="4" value="79"/><column index="5" value="79"/><column index="6" value="87"/><column index="7" value="143"/><column index="8" value="87"/><column index="9" value="79"/><column index="10" value="87"/><column index="11" value="239"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">CREATE TABLE Certificate (
+    CertificateID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name VARCHAR NOT NULL,
+    Issuer VARCHAR NOT NULL,
+    YearsActiveFor INT NULL,
+    Notes VARCHAR NULL
+);
+
+CREATE TABLE User (
+    UserID INTEGER PRIMARY KEY AUTOINCREMENT,
+    RoleID INTEGER NOT NULL,
+    AccountType TEXT NOT NULL CHECK (AccountType IN ('Admin', 'Player', 'Team Manager', 'Referee')),
+    Firstname VARCHAR(255) NOT NULL,
+    Surname VARCHAR(255) NOT NULL,
+    Password TEXT NOT NULL,
+    Username TEXT NOT NULL UNIQUE,
+    DateOfBirth DATE NOT NULL,
+    Nationality VARCHAR(255) NOT NULL,
+    PhoneNumber VARCHAR(255) NOT NULL,
+    Email TEXT NOT NULL UNIQUE,
+    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE TeamManager (
+    ManagerID INTEGER PRIMARY KEY AUTOINCREMENT, 
+    UserID INT NOT NULL,
+    StartDate DATETIME NOT NULL,
+    EndDate DATETIME,
+    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE TeamManager_Certificate (
+    ManagerID INTEGER NOT NULL,
+    CertificateID INTEGER NOT NULL,
+    IssueDate DATETIME NOT NULL,
+    ExpiryDate DATETIME NULL,
+    PRIMARY KEY (ManagerID, CertificateID),
+    FOREIGN KEY (ManagerID) REFERENCES TeamManager(ManagerID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (CertificateID) REFERENCES Certificate(CertificateID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+
+CREATE TABLE Player (
+    PlayerID INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserID INT NOT NULL,
+    TeamID INT NOT NULL,
+    Goals INT DEFAULT 0,
+    Assists INT DEFAULT 0,
+    RedCards INT DEFAULT 0,
+    YellowCards INT DEFAULT 0,
+    Appearances INT DEFAULT 0,
+    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Referee (
+    RefereeID INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserID INTEGER NOT NULL,
+    PayPerHour INTEGER NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Referee_Certificate (
+    RefereeID INTEGER NOT NULL,
+    CertificateID INTEGER NOT NULL,
+    IssueDate DATETIME NOT NULL,
+    ExpiryDate DATETIME NULL,
+    PRIMARY KEY (RefereeID, CertificateID),
+    FOREIGN KEY (RefereeID) REFERENCES Referee(RefereeID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (CertificateID) REFERENCES Certificate(CertificateID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE FieldOwner (
+    FieldOwnerID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Firstname VARCHAR(255),
+    Surname VARCHAR(255),
+    Email VARCHAR(255)
+);
+
+CREATE TABLE Field (
+    FieldID INTEGER PRIMARY KEY AUTOINCREMENT,
+    FieldOwnerID INT NOT NULL,
+    Name VARCHAR(255) NOT NULL,
+    PricePerHour INT NOT NULL,
+    Location VARCHAR(255) NOT NULL,
+    OpeningHours DATETIME,
+    ClosingHours DATETIME,
+    Capacity INT,
+    FOREIGN KEY (FieldOwnerID) REFERENCES FieldOwner(FieldOwnerID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Team (
+    TeamID INTEGER PRIMARY KEY AUTOINCREMENT,
+    LeagueID INTEGER NOT NULL,
+    ManagerID INTEGER,
+    FieldID INTEGER NOT NULL,
+    TeamName VARCHAR(255) NOT NULL,
+    FOREIGN KEY (LeagueID) REFERENCES League(LeagueID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (ManagerID) REFERENCES TeamManager(ManagerID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (FieldID) REFERENCES Field(FieldID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Maintenance (
+    MaintenanceID INTEGER PRIMARY KEY AUTOINCREMENT,
+    FieldID INTEGER NOT NULL,
+    MaintenanceType VARCHAR(255) NOT NULL,
+    StartDate DATETIME NOT NULL,
+    EndDate DATETIME NOT NULL,
+    Description VARCHAR(255),
+    Status TEXT NOT NULL,
+    FOREIGN KEY (FieldID) REFERENCES Field(FieldID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE League_Match (
+    LeagueMatchID INTEGER PRIMARY KEY AUTOINCREMENT,
+    LeagueID INTEGER NOT NULL,
+    HomeTeamID INTEGER NOT NULL,
+    AwayTeamID INTEGER NOT NULL,
+    MatchDate DATETIME NOT NULL,
+    Venue VARCHAR NOT NULL,
+    Status TEXT NOT NULL CHECK(Status IN ('Scheduled', 'Ongoing', 'Completed', 'Cancelled')),
+    FOREIGN KEY (LeagueID) REFERENCES League(LeagueID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (HomeTeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (AwayTeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Friendly_Match (
+    FriendlyMatchID INTEGER PRIMARY KEY AUTOINCREMENT,
+    FieldID INTEGER NOT NULL,
+    TeamID INTEGER NOT NULL,
+    OpposingTeamID INTEGER NOT NULL,
+    MatchDate DATETIME NOT NULL,
+    Status TEXT NOT NULL CHECK(Status IN ('Scheduled', 'Ongoing', 'Completed', 'Cancelled')),
+    FOREIGN KEY (FieldID) REFERENCES Field(FieldID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (OpposingTeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Match_Report_Log (
+    MatchReportID INTEGER PRIMARY KEY AUTOINCREMENT,
+    RefBookingID INTEGER NOT NULL,
+    FriendlyMatchID INTEGER NULL,
+    LeagueMatchID INTEGER NULL,
+    TeamID INTEGER NOT NULL,
+    PlayerID INTEGER NOT NULL,
+    PlayerNumber INTEGER NOT NULL,
+    Event TEXT NOT NULL CHECK(Event IN ('Goal', 'Yellow Card', 'Red Card', 'Substitution', 'Injury')),
+    Time INTEGER NOT NULL,
+    Reason VARCHAR NULL,
+    FOREIGN KEY (RefBookingID) REFERENCES Referee_Booking(RefBookingID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (FriendlyMatchID) REFERENCES Friendly_Match(FriendlyMatchID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (LeagueMatchID) REFERENCES League_Match(LeagueMatchID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Referee_Report (
+    RefereeID INTEGER PRIMARY KEY AUTOINCREMENT,
+    TeamManagerID INTEGER NOT NULL,
+    MatchReportID INTEGER NOT NULL,
+    Rating INTEGER,
+    Notes VARCHAR,
+    FOREIGN KEY (TeamManagerID) REFERENCES TeamManager(ManagerID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (MatchReportID) REFERENCES Match_Report_Log(MatchReportID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Referee_Booking (
+    RefBookingID INTEGER PRIMARY KEY AUTOINCREMENT,
+    RefereeID INTEGER NOT NULL,
+    LeagueMatchID INTEGER NULL,
+    FriendlyMatchID INTEGER NULL,
+    Status TEXT NOT NULL CHECK(Status IN ('Scheduled', 'Completed', 'Cancelled')),
+    Notes VARCHAR NULL,
+    FOREIGN KEY (RefereeID) REFERENCES Referee(RefereeID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (LeagueMatchID) REFERENCES League_Match(LeagueMatchID) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (FriendlyMatchID) REFERENCES Friendly_Match(FriendlyMatchID) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE Roster (
+    RosterID INTEGER PRIMARY KEY AUTOINCREMENT,
+    LeagueMatchID INTEGER NOT NULL,
+    TeamID INTEGER NOT NULL,
+    PlayerID INTEGER NOT NULL,
+    Position VARCHAR NOT NULL,
+    ShirtNumber INTEGER NOT NULL,
+    FOREIGN KEY (LeagueMatchID) REFERENCES League_Match(LeagueMatchID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (TeamID) REFERENCES Team(TeamID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Activity (
+    ActivityLogID INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserID INTEGER NOT NULL,
+    LastLogin DATETIME NULL,
+    IsActive BOOLEAN NULL,
+    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Roles (
+    RoleID INTEGER PRIMARY KEY AUTOINCREMENT,
+    PermissionID INT NOT NULL,
+    Name VARCHAR NOT NULL,
+    Description VARCHAR NOT NULL,
+    FOREIGN KEY (PermissionID) REFERENCES Permissions(PermissionID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Permissions (
+    PermissionID INTEGER PRIMARY KEY AUTOINCREMENT
+);
+
+CREATE TABLE League (
+    LeagueID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name VARCHAR(255) NOT NULL,
+    Country VARCHAR(255) NOT NULL
+);
+
+--/////////////////////////////////////////////////////////////////////////////////////////////
+
+INSERT INTO Permissions (PermissionID)
+VALUES
+(1), (2), (3), (4);
+
+INSERT INTO Roles (PermissionID, Name, Description)
+VALUES
+(1, 'Admin', 'Has full access to the system'),
+(2, 'Player', 'Can participate in matches and view their stats'),
+(3, 'Team Manager', 'Can manage a team, roster, and player data'),
+(4, 'Referee', 'Can officiate matches and manage reports');
+
+INSERT INTO Certificate (Name, Issuer, YearsActiveFor, Notes)
+VALUES
+('Coaching Level 1', 'Football Association', 2, 'Basic coaching certification'),
+('Coaching Level 2', 'Football Association', 3, 'Advanced coaching certification'),
+('Referee Level 1', 'Football Federation', 1, 'Entry-level referee certification'),
+('Referee Level 2', 'Football Federation', 2, 'Advanced referee certification');
+
+INSERT INTO User (RoleID, AccountType, Firstname, Surname, Password, Username, DateOfBirth, Nationality, PhoneNumber, Email)
+VALUES
+(1, 'Admin', 'John', 'Doe', 'admin123', 'johndoe', '1985-01-15', 'USA', '555-0101', 'johndoe@example.com'),
+(2, 'Player', 'Alice', 'Smith', 'password1', 'alicesmith', '1995-07-22', 'USA', '555-0102', 'alicesmith@example.com'),
+(2, 'Player', 'Bob', 'Johnson', 'password2', 'bobjohnson', '1993-04-10', 'UK', '555-0103', 'bobjohnson@example.com'),
+(2, 'Player', 'Charlie', 'Brown', 'password3', 'charliebrown', '1996-02-25', 'Canada', '555-0104', 'charliebrown@example.com'),
+(3, 'Team Manager', 'David', 'Wilson', 'password4', 'davidwilson', '1980-11-12', 'Australia', '555-0105', 'davidwilson@example.com'),
+(2, 'Player', 'Eve', 'Davis', 'password5', 'evedavis', '1992-06-18', 'USA', '555-0106', 'evedavis@example.com'),
+(4, 'Referee', 'Frank', 'Miller', 'password6', 'frankmiller', '1988-09-05', 'USA', '555-0107', 'frankmiller@example.com'),
+(2, 'Player', 'Grace', 'Martinez', 'password7', 'gracemartinez', '1994-03-12', 'Mexico', '555-0108', 'gracemartinez@example.com'),
+(2, 'Player', 'Hannah', 'Garcia', 'password8', 'hannahgarcia', '1991-08-23', 'USA', '555-0109', 'hannahgarcia@example.com'),
+(3, 'Team Manager', 'Isaac', 'Rodriguez', 'password9', 'isaacrodriguez', '1979-12-02', 'Spain', '555-0110', 'isaacrodriguez@example.com'),
+(4, 'Referee', 'Jack', 'Lopez', 'password10', 'jacklopez', '1987-05-17', 'Brazil', '555-0111', 'jacklopez@example.com'),
+(2, 'Player', 'Katherine', 'Martinez', 'password11', 'katherinemartinez', '1990-01-30', 'Colombia', '555-0112', 'katherinemartinez@example.com'),
+(2, 'Player', 'Liam', 'Hernandez', 'password12', 'liamhernandez', '1997-12-14', 'Argentina', '555-0113', 'liamhernandez@example.com'),
+(3, 'Team Manager', 'Mason', 'Taylor', 'password13', 'masontaylor', '1982-02-04', 'UK', '555-0114', 'masontaylor@example.com'),
+(2, 'Player', 'Noah', 'Moore', 'password14', 'noahmoore', '1995-10-21', 'USA', '555-0115', 'noahmoore@example.com'),
+(2, 'Player', 'Olivia', 'Jackson', 'password15', 'oliviajackson', '1998-11-09', 'USA', '555-0116', 'oliviajackson@example.com'),
+(2, 'Player', 'Peter', 'White', 'password16', 'peterwhite', '1991-03-17', 'Australia', '555-0117', 'peterwhite@example.com'),
+(4, 'Referee', 'Quincy', 'Perez', 'password17', 'quincyperez', '1990-07-28', 'Spain', '555-0118', 'quincyperez@example.com'),
+(3, 'Team Manager', 'Rachel', 'Lee', 'password18', 'rachellee', '1983-05-14', 'USA', '555-0119', 'rachellee@example.com');
+
+INSERT INTO FieldOwner (Firstname, Surname, Email)
+VALUES
+('George', 'King', 'georgeking@example.com'),
+('Linda', 'Brown', 'lindabrown@example.com');
+
+INSERT INTO Field (FieldOwnerID, Name, PricePerHour, Location, OpeningHours, ClosingHours, Capacity)
+VALUES
+(1, 'City Stadium', 100, 'New York', '2023-01-01 08:00:00', '2023-01-01 22:00:00', 5000),
+(2, 'Riverside Arena', 120, 'Los Angeles', '2023-01-01 08:00:00', '2023-01-01 22:00:00', 4500);
+
+INSERT INTO League (LeagueID, Name, Country)
+VALUES
+(1, 'Premier League', 'England'),
+(2, 'La Liga', 'Spain');
+
+INSERT INTO TeamManager (UserID, StartDate, EndDate)
+VALUES
+(5, '2015-06-01', '2023-05-31'),
+(10, '2016-07-15', '2022-08-10'),
+(13, '2017-04-20', '2024-03-19');
+
+INSERT INTO Team (LeagueID, ManagerID, FieldID, TeamName)
+VALUES
+(1, 1, 1, 'City FC'),
+(1, 2, 2, 'Riverside SC'),
+(2, 3, 1, 'Lions United');
+
+INSERT INTO Player (UserID, TeamID, Goals, Assists, RedCards, YellowCards, Appearances)
+VALUES
+(2, 1, 15, 7, 1, 2, 20),
+(3, 1, 18, 5, 0, 3, 22),
+(4, 1, 10, 8, 1, 1, 18),
+(6, 2, 12, 6, 2, 2, 19),
+(7, 2, 8, 4, 0, 1, 16),
+(8, 2, 14, 10, 1, 2, 21),
+(9, 3, 20, 9, 1, 4, 24),
+(11, 3, 11, 8, 0, 3, 18),
+(12, 3, 17, 6, 0, 2, 22),
+(14, 3, 5, 2, 0, 1, 15),
+(15, 3, 8, 4, 1, 3, 17),
+(16, 3, 6, 3, 0, 2, 14);
+
+INSERT INTO Referee (UserID, PayPerHour)
+VALUES
+(17, 50),
+(18, 55);
+
+INSERT INTO Referee_Certificate (RefereeID, CertificateID, IssueDate, ExpiryDate)
+VALUES
+(1, 3, '2020-03-15', '2023-03-15'),
+(2, 4, '2021-06-10', '2024-06-10');
+
+INSERT INTO TeamManager_Certificate (ManagerID, CertificateID, IssueDate, ExpiryDate)
+VALUES
+(1, 1, '2020-05-20', '2023-05-20'),
+(2, 2, '2021-06-15', '2024-06-15'),
+(3, 3, '2019-07-10', '2022-07-10');
+
+INSERT INTO Maintenance (FieldID, MaintenanceType, StartDate, EndDate, Description, Status)
+VALUES
+(1, 'Routine', '2023-04-10 09:00:00', '2023-04-10 12:00:00', 'Field marking and cleaning', 'Completed'),
+(2, 'Major', '2023-05-01 10:00:00', '2023-05-01 18:00:00', 'Pitch resurfacing', 'Scheduled');
+
+INSERT INTO League_Match (LeagueID, HomeTeamID, AwayTeamID, MatchDate, Venue, Status)
+VALUES
+(1, 1, 2, '2023-06-01 16:00:00', 'City Stadium', 'Completed'),
+(2, 3, 1, '2023-06-02 17:00:00', 'Riverside Arena', 'Completed');
+
+INSERT INTO Friendly_Match (FieldID, TeamID, OpposingTeamID, MatchDate, Status)
+VALUES
+(1, 1, 3, '2023-06-01 14:00:00', 'Completed'),
+(2, 2, 1, '2023-06-02 14:00:00', 'Completed');
+
+INSERT INTO Referee_Booking (RefereeID, LeagueMatchID, FriendlyMatchID, Status, Notes)
+VALUES
+(1, 1, NULL, 'Completed', 'Referee for the Premier League match'),
+(2, NULL, 2, 'Completed', 'Referee for the friendly match');
+
+INSERT INTO Match_Report_Log (RefBookingID, FriendlyMatchID, LeagueMatchID, TeamID, PlayerID, PlayerNumber, Event, Time, Reason)
+VALUES
+(1, 1, NULL, 1, 2, 9, 'Goal', 12, NULL),
+(2, 2, NULL, 3, 6, 10, 'Yellow Card', 24, 'Foul'),
+(1, NULL, 1, 1, 4, 7, 'Goal', 18, NULL),
+(2, NULL, 2, 3, 8, 11, 'Substitution', 60, 'Injured');
+
+INSERT INTO Referee_Report (MatchReportID, TeamManagerID, Notes, Rating)
+VALUES
+(1, 1, 'A thrilling match with 3 goals scored.', 7),
+(2, 2, 'One-sided game with clear victory.', 9);
+
+INSERT INTO Referee_Booking (RefereeID, LeagueMatchID, FriendlyMatchID, Status, Notes)
+VALUES
+(1, 1, NULL, 'Completed', 'Referee for the Premier League match'),
+(2, NULL, 2, 'Completed', 'Referee for the friendly match');
+
+INSERT INTO Roster (LeagueMatchID, TeamID, PlayerID, Position, ShirtNumber)
+VALUES
+(1, 1, 2, 'Forward', 9),
+(1, 1, 3, 'Midfielder', 10),
+(2, 3, 6, 'Defender', 5),
+(2, 3, 7, 'Goalkeeper', 1),
+(1, 2, 4, 'Forward', 11),
+(2, 3, 10, 'Midfielder', 8);
+
+INSERT INTO Activity (UserID, LastLogin, IsActive)
+VALUES
+(1, '2023-06-01 15:00:00', 1),
+(2, '2023-06-01 12:00:00', 1),
+(3, '2023-06-02 13:00:00', 1),
+(4, '2023-06-01 14:00:00', 0),
+(5, '2023-06-02 12:00:00', 1),
+(6, '2023-06-01 16:00:00', 1),
+(7, '2023-06-02 14:00:00', 1),
+(8, '2023-06-01 14:30:00', 1),
+(9, '2023-06-02 15:00:00', 1),
+(10, '2023-06-02 12:00:00', 1),
+(11, '2023-06-01 17:00:00', 1),
+(12, '2023-06-02 13:00:00', 1),
+(13, '2023-06-01 13:00:00', 0),
+(14, '2023-06-02 11:00:00', 1),
+(15, '2023-06-01 16:30:00', 1),
+(16, '2023-06-02 14:30:00', 1),
+(17, '2023-06-02 14:00:00', 1),
+(18, '2023-06-01 13:30:00', 1),
+(19, '2023-06-01 14:45:00', 1);
 </sql><current_tab id="0"/></tab_sql></sqlb_project>
