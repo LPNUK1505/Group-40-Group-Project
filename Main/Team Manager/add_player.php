@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
        <!-- Creates buttons in the Sidebar -->
        <div class="sidebar-button">
-            <a onclick="location.href='RosterManagement.html'">
+            <a onclick="location.href='RosterManagement.php'">
                 <i class="fa-solid fa-backward"></i>Back
             </a>
         </div>

@@ -35,7 +35,7 @@
                 </a>
             </div>
             <div class="sidebar-button">
-                <a href="RosterManagement.html">
+                <a href="RosterManagement.php">
                     <i class="fa-solid fa-user-plus"></i>Roster Management
                 </a>
             </div>
@@ -50,7 +50,7 @@
                 </a>
             </div>
             <div class="sidebar-button">
-                <a href="PlayerStats.html" class="stayOnPageLink">
+                <a href="PlayerStats.php" class="stayOnPageLink">
                     <i class="fa-solid fa-chart-simple"></i>Player Stats
                 </a>
             </div>

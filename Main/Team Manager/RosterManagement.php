@@ -12,8 +12,6 @@ try {
 
 
 <?php
-include_once __DIR__ . '/../Include/db.php';
-echo "db.php included successfully!";
 
 $sql = "SELECT
             User.UserID,
@@ -119,7 +117,7 @@ if (isset($_GET['id'])) {
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="RosterManagement.html" class="stayOnPageLink">
+            <a href="RosterManagement.php" class="stayOnPageLink">
                 <i class="fa-solid fa-user-plus"></i>Roster Management
             </a>
         </div>
@@ -134,7 +132,7 @@ if (isset($_GET['id'])) {
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="PlayerStats.html">
+            <a href="PlayerStats.php">
                 <i class="fa-solid fa-chart-simple"></i>Player Stats
             </a>
         </div>
