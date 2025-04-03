@@ -7,6 +7,7 @@
 
         <!-- Creates the Header at the top -->
         <div class="header">
+            <h2>Add Users</h2>
             <div class="profile-box">
                 <i class="fa fa-user"></i>
                 <div>
@@ -29,31 +30,7 @@
 
             <!-- Creates buttons in the Sidebar -->
             <div class="sidebar-separator"></div>
-            <div class="sidebar-button">
-                <a href="Dashboard.php">
-                    <i class="fa-solid fa-people-group"></i>Dashboard
-                </a>
-            </div>
-            <div class="sidebar-button">
-                <a href="Users.php">
-                    <i class="fa-solid fa-user-plus"></i>Users
-                </a>
-            </div>
-            <div class="sidebar-button">
-                <a href="Teams.html">
-                    <i class="fa-solid fa-square-check"></i>Teams
-                </a>
-            </div>
-            <div class="sidebar-button">
-                <a href="Matches.php">
-                    <i class="fa-solid fa-calendar"></i>Matches
-                </a>
-            </div>
-            <div class="sidebar-button">
-                <a href="Pitches.php" class="stayOnPageLink">
-                    <i class="fa-solid fa-chart-simple"></i>Pitches
-                </a>
-            </div>
+          
 
             <div class="sidebar-toolbox-container">
                 <div class="sidebar-separator"></div>
@@ -79,6 +56,11 @@
 
 
         </div>
+
+        <div class="footer">
+        <a href="../Homepages/AboutUs.html">About Us</a>
+        <a href="../Homepages/ContactUs.html">Contact Us</a>
+    </div>
        
 </body>
 

@@ -604,3 +604,207 @@
     margin-right: 5px;
 }
 
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Apply styles ONLY to dashboard page */
+.dashboard-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #012C40;
+    color: #F2F2F2;
+    overflow-x: hidden;
+}
+
+/* Main content expands and allows scrolling */
+.dashboard-page .main-content {
+    flex-grow: 1;
+    padding: 20px;
+    text-align: center;
+    overflow-y: auto; /* Enables scrolling ONLY on dashboard */
+}
+
+/* Dashboard title */
+.dashboard-page h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.dashboard-page h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Arrange Recent Activities & Overview side-by-side */
+.dashboard-page .dashboard-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    flex-wrap: wrap; /* Allows responsiveness */
+}
+
+/* Dashboard Section Styles */
+.dashboard-page .dashboard-section {
+    background-color: #024873;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    flex: 1;
+    min-width: 320px;
+    max-width: 48%;
+    text-align: center;
+}
+
+/* Styling for the inner content boxes */
+.dashboard-page .activities-box, 
+.dashboard-page .overview-box {
+    background-color: #03658C;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* Ensure the league table fits properly */
+.dashboard-page .league-standings-container {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    justify-content: center; /* Centering */
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Make the box fit the table */
+.dashboard-page .league-standings-container .dashboard-section {
+    width: 100%;
+    max-width: 600px; /* Adjust based on table size */
+    padding: 20px;
+    overflow-x: auto; /* Allows scrolling if needed */
+}
+
+/* Table Styling */
+.dashboard-page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.dashboard-page th, 
+.dashboard-page td {
+    border: 1px solid #fff;
+    padding: 8px;
+    text-align: center;
+    white-space: nowrap; /* Prevents text from wrapping */
+}
+
+.dashboard-page th {
+    background-color: #03658C;
+}
+
+/* Footer Fix - Ensure Clickable Links */
+.dashboard-page .footer {
+    width: 100%;
+    background-color: #044D8C;
+    text-align: center;
+    padding: 20px;
+    color: #F2F2F2;
+    font-size: 16px;
+    position: relative;
+    z-index: 10; /* Ensures it's above everything */
+}
+
+.dashboard-page .footer a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    position: relative; /* Ensures links are clickable */
+    z-index: 15;
+}
+
+.dashboard-page .footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-page .dashboard-top {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .dashboard-page .dashboard-section {
+        max-width: 100%;
+    }
+}
+
+/* Main Content Area */
+.user-content {
+    max-width: 95%;
+    margin: auto;
+    padding: 20px;
+    background: #1e3a5f; /* Dark Blue */
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+/* Users Container */
+.users-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Users Table */
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 16px;
+}
+
+.users-table th, .users-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    color: #333; /* Dark Gray for readability */
+}
+
+
+.users-table tr:nth-child(even) {
+    background: #f4f4f4;
+}
+
+.users-table tr:hover {
+    background: #d6e4f0;
+}
+
+/* Add User Button */
+.add-user-btn {
+    display: block;
+    width: 200px;
+    margin: 20px auto;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 6px;
+    transition: 0.3s ease;
+}
+
+.add-user-btn:hover {
+    background: #0056b3;
+}
