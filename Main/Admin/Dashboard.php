@@ -1,51 +1,128 @@
 <!DOCTYPE html>
- <html>
-    <!-- JAVA line for 'fontawesome' icons -->
-    <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../styles.css">
+    <html>
+        <!-- JAVA line for 'fontawesome' icons -->
+        <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../styles.css">
 
 
-    <!-- Creates the Header at the top -->
-    <div class="header">
-        <div class="header-menu-icon">
-            <i class="fa-solid fa-bars"></i>
+        <!-- Creates the Header at the top -->
+        <div class="header">
+            <div class="profile-box">
+                <i class="fa fa-user"></i>
+                <div>
+                    <div class="name">Fazley</div>
+                    <div class="role">Admin</div>
+                </div>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+                <div class="dropdown">
+                    <a href="#">Profile</a>
+                    <a href="../Homepages/SettingsData.html">Manage Data</a>
+                    <a href="../Create Account and Login/Login.php">Sign Out</a>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- Creates the Sidebar on the left hand side -->
+        <div class="sidebar">
+            <img src="../GoikonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
+
+            <!-- Creates buttons in the Sidebar -->
+            <div class="sidebar-separator"></div>
+            <div class="sidebar-button">
+                <a href="Dashboard.php">
+                    <i class="fa-solid fa-people-group"></i>Dashboard
+                </a>
+            </div>
+            <div class="sidebar-button">
+                <a href="Users.php">
+                    <i class="fa-solid fa-user-plus"></i>Users
+                </a>
+            </div>
+            <div class="sidebar-button">
+                <a href="Teams.html">
+                    <i class="fa-solid fa-square-check"></i>Teams
+                </a>
+            </div>
+            <div class="sidebar-button">
+                <a href="Matches.php">
+                    <i class="fa-solid fa-calendar"></i>Matches
+                </a>
+            </div>
+            <div class="sidebar-button">
+                <a href="Pitches.php" class="stayOnPageLink">
+                    <i class="fa-solid fa-chart-simple"></i>Pitches
+                </a>
+            </div>
+
+            <div class="sidebar-toolbox-container">
+                <div class="sidebar-separator"></div>
+                <div class="sidebar-toolbox-button">
+                    <a href="../Homepages/SettingsPersonal.html">
+                        <i class="fa-solid fa-gear"></i>Settings
+                    </a>
+                </div>
+                <div class="sidebar-toolbox-button">
+                    <a href="../Create Account and Login/Login.php">
+                        <i class="fa-solid fa-right-from-bracket"></i></i>Sign Out
+                    </a>
+                </div>
+            </div>
         </div>
 
-        <!-- Creates icons for the right hand side of the header -->
-        <div class="header-right-icon">
-            <i class="fa-solid fa-gear"></i>
-            <i class="fa-solid fa-user-large"></i>
-        </div>
-    </div>
-    
 
-    <!-- Creates the Sidebar on the left hand side -->
-    <div class="sidebar">
-        <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
-
-        <!-- Creates buttons in the Sidebar -->
-        <a href="#Option 1">Dashboard</a>
-        <a href="#Option 2">Users</a>
-        <a href="#Option 3">Teams</a>
-        <a href="#Option 4">Matches</a>
-        <a href="#Option 4">Pitches</a>
-
-    </div>
-
-
-    <!-- Creates the Footer at the bottom -->
-    <div class="footer">
-
-        <!-- Creates buttons in the footer -->
-        <a href="#Option 1">Option 1</a>
-        <a href="#Option 2">Option 2</a>
-        <a href="#Option 3">Option 3</a>
-    </div>
-
-
-    <!-- Creates Main Content area -->
+        <body class="dashboard-page">
     <div class="main-content">
-        <h1> Main Content </h1>
+        <h1>Dashboard</h1>
+        <h2>Welcome, Fazley!</h2>
 
+        <!-- Wrapper for Recent Activities and Overview -->
+        <div class="dashboard-top">
+            <div class="dashboard-section">
+                <h3>Recent Activities</h3>
+                <div class="activities-box">Updates on scoreline, teams added, etc.</div>
+            </div>
+
+            <div class="dashboard-section">
+                <h3>Overview</h3>
+                <div class="overview-box">
+                    <p>Total users: [ ]</p>
+                    <p>Total teams: [ ]</p>
+                    <p>Active users: [ ]</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- League Standings Below -->
+        <div class="league-standings-container">
+            <div class="dashboard-section">
+                <h3>League Standings</h3>
+                <table>
+                    <tr><th>Position</th><th>Club</th><th>Won/Draw/Loss</th><th>Points</th></tr>
+                    <tr><td>1</td><td>Selangor</td><td>15/2/0</td><td>47</td></tr>
+                    <tr><td>2</td><td>Sabah</td><td>12/1/4</td><td>37</td></tr>
+                    <tr><td>3</td><td>Sabah</td><td>12/1/4</td><td>37</td></tr>
+                    <tr><td>4</td><td>Sabah</td><td>12/1/4</td><td>37</td></tr>
+                    <tr><td>5</td><td>Sabah</td><td>12/1/4</td><td>37</td></tr>
+                    <tr><td>6</td><td>Sabah</td><td>12/1/4</td><td>37</td></tr>
+                </table>
+            </div>
+        </div>
     </div>
-</html>
+
+    <!-- Footer -->
+    <div class="footer">
+        <a href="../Homepages/AboutUs.html">About Us</a>
+        <a href="../Homepages/ContactUs.html">Contact Us</a>
+    </div>
+</body>
+
+
+
+        <!-- JAVA script to change colour of sidebar button referring to active page-->
+        <!-- REQUIRES a class to be added to the active button-CHECK SettingsPersonal.html for an example-->
+        <script src="../sidebar.js"></script>
+        <script>
+            window.onload = preventPageRefresh;
+        </script>
+    </html>
