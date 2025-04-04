@@ -1,3 +1,15 @@
+<?php
+include_once __DIR__ . '/../Include/db.php'; // Path to db.php (which includes the Database class)
+
+// Instantiate the Database class to get the connection
+try {
+    $dbInstance = new Database();  // Instantiate the Database class
+    $conn = $dbInstance->getConnection(); // Get the connection
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());  // If there's an error, display a message and stop execution
+}
+?>
+
 <!DOCTYPE html>
  <html>
     <!-- JAVA line for 'fontawesome' icons -->
