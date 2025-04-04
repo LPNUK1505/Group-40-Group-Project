@@ -399,7 +399,7 @@ try {
                         echo "<ul class="fixture-list">";
                         <a href="UpcomingMatches.html" class="fixture-list">
                         echo "<li class="fixture-list-item">";
-                        
+                        echo "<div class="fixture-list-item-text-container">"
 
                     
 
