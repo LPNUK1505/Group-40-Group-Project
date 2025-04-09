@@ -10,6 +10,7 @@ try {
 }
 ?>
 
+
 <!DOCTYPE html>
  <html>
     <!-- JAVA line for 'fontawesome' icons -->
@@ -391,6 +392,21 @@ try {
                                         </div>
                                     </div>
                             </li>
+                        <?php
+                        $db = new SQLITE3(filename: 'db.php' );
+                        $select_query = "SELECT * FROM League_Match";
+                        $result = $db- >query(query: $select_query);
+                        echo "<ul class="fixture-list">";
+                        <a href="UpcomingMatches.html" class="fixture-list">
+                        echo "<li class="fixture-list-item">";
+                        
+
+                    
+
+                        
+
+
+
 
                             <li class="fixture-list-item">
                                 <div class="fixture-list-item-text-container">
