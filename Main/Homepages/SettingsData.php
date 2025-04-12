@@ -1,3 +1,94 @@
+<?php
+include_once __DIR__ . '/../Include/db.php'; // Path to db.php (which includes the Database class)
+
+// Instantiate the Database class to get the connection
+try {
+    $dbInstance = new Database();  // Instantiate the Database class
+    $conn = $dbInstance->getConnection(); // Get the connection
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());  // If there's an error, display a message and stop execution
+}
+
+// Initialize variables for the form
+$userID = '8';
+
+// Fetch the current user's details from the database to prefill the form
+$sql = "SELECT *
+        FROM User
+        WHERE UserID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bindValue(1, $userID, SQLITE3_INTEGER);  // Correct way to bind in SQLite
+$result = $stmt->execute();
+
+if ($result) {
+    $row = $result->fetchArray(SQLITE3_ASSOC);
+    if ($row) {
+        $firstname = $row['Firstname'];
+        $surname = $row['Surname'];
+        $role = $row['AccountType'];
+        $password = $row['Password'];
+
+    } else {
+        die("User not found.");
+    }
+} else {
+    die("Error fetching user data: " . $conn->lastErrorMsg());
+}
+
+// Handle downloading user data
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['download'])) {
+    $password1 = isset($_POST['password1']) ? $_POST['password1'] : '';
+    $passwordconfirm1 = isset($_POST['passwordconfirm1']) ? $_POST['passwordconfirm1'] : '';
+
+    // Fetch the User's data
+    if ($userID) {
+        if ($password1 === $passwordconfirm1 && $password1 === $password) {
+
+            $fetchUserSql = "SELECT * FROM User WHERE UserID = ?";
+            $stmt = $conn->prepare($fetchUserSql);
+            $stmt->bindValue(1, $userID, SQLITE3_INTEGER);
+
+            $result = $stmt->execute();
+            $user = $result->fetchArray(SQLITE3_ASSOC);
+
+            $columns = array_keys($user);
+            $filename = "your_date_" . $user['UserID'] . ".csv";
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            
+            $output = fopen('php://output', 'w');
+            foreach ($columns as $column) {
+                fputcsv($output, array($column, $user[$column]));
+            }
+            fclose($output);
+
+            exit;
+        }
+    }
+}
+
+// Handle deleting user data
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
+    $password2 = isset($_POST['password2']) ? $_POST['password2'] : '';
+    $passwordconfirm2 = isset($_POST['passwordconfirm2']) ? $_POST['passwordconfirm2'] : '';
+
+    // Delete the User's data
+    if ($userID) {
+        if ($password2 === $passwordconfirm2 && $password2 === $password) {
+
+            $deleteUserSql = "DELETE FROM User WHERE UserID = ?";
+            $stmt = $conn->prepare($deleteUserSql);
+            $stmt->bindValue(1, $userID, SQLITE3_INTEGER);
+
+            $stmt->execute();
+        }
+    }
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html>
    <!-- JAVA line for 'fontawesome' icons -->
@@ -10,8 +101,8 @@
         <div class="profile-box">
             <i class="fa fa-user"></i>
             <div>
-                <div class="name">John Doe</div>
-                <div class="role">Team Manager</div>
+            <div class="name"><?php echo $firstname . ' ' . $surname; ?></div>
+            <div class="role"><?php echo $role; ?></div>
             </div>
             <i class="fa fa-chevron-down dropdown-icon"></i>
             <div class="dropdown">
@@ -42,6 +133,11 @@
                 <i class="fa-solid fa-cloud-arrow-up"></i>Manage Data
             </a>
         </div>
+        <div class="sidebar-button">
+            <a onclick="history.back()">
+                <i class="fa-solid fa-backward"></i>Back
+            </a>
+        </div>
 
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
@@ -69,7 +165,7 @@
 
    <!-- Creates Main Content area -->
    <div class="main-content">
-        <form>
+        <form method="POST">
             <style>
                 form{
                     text-align: center;
@@ -162,15 +258,15 @@
                 <div class="form_row">
                     <div class="password_group">
                         <label for="Password">*Password</label>
-                        <input type="text" id="Password" name="Password" required>
+                        <input type="password" id="password1" name="password1">
 
                         <label for="PasswordConfirm">*Confirm Password</label>
-                        <input type="text" id="PasswordConfirm" name="PasswordConfirm" required>
+                        <input type="password" id="passwordconfirm1" name="passwordconfirm1">
                     </div>
 
                     <div class="download_group">
-                        <label class="message">Your data will be emailed directly to you.</label>
-                        <button type="submit">Download</button>
+                        <label class="message">This may take a few minutes.</label>
+                        <button type="submit" name="download">Download</button>
                     </div>
                 </div>
 
@@ -183,15 +279,15 @@
                 <div class="form_row">
                     <div class="password_group">
                         <label for="Password">*Password</label>
-                        <input type="text" id="Password" name="Password" required>
+                        <input type="password" id="password2" name="password2">
 
                         <label for="PasswordConfirm">*Confirm Password</label>
-                        <input type="text" id="PasswordConfirm" name="PasswordConfirm" required>
+                        <input type="password" id="passwordconfirm2" name="passwordconfirm2">
                     </div>
 
                     <div class="delete_group">
                         <label class="message">This action is irreversible.</label>
-                        <button type="submit">Delete</button>
+                        <button type="submit" name="delete">Delete</button>
                     </div>
                 </div>
             </h3>
