@@ -40,7 +40,7 @@
                 </a>
             </div>
             <div class="sidebar-button">
-                <a href="Teams.html">
+                <a href="Teams.php">
                     <i class="fa-solid fa-square-check"></i>Teams
                 </a>
             </div>
@@ -79,6 +79,11 @@
 
 
         </div>
+
+        <div class="footer">
+        <a href="../Homepages/AboutUs.html">About Us</a>
+        <a href="../Homepages/ContactUs.html">Contact Us</a>
+    </div>
        
 </body>
 

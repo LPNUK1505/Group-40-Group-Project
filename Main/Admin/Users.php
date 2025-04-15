@@ -51,7 +51,7 @@ $result = $conn->query($query);
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="Teams.html">
+            <a href="Teams.php">
                 <i class="fa-solid fa-square-check"></i>Teams
             </a>
         </div>
