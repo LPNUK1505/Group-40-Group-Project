@@ -1,18 +1,17 @@
 <?php
-include_once __DIR__ . '/../Include/db.php'; // Path to db.php (which includes the Database class)
+include_once __DIR__ . '/../Include/db.php'; 
 
-// Instantiate the Database class to get the connection
 try {
-    $dbInstance = new Database();  // Instantiate the Database class
-    $conn = $dbInstance->getConnection(); // Get the connection
+    $dbInstance = new Database();  
+    $conn = $dbInstance->getConnection(); 
 } catch (Exception $e) {
-    die("Error: " . $e->getMessage());  // If there's an error, display a message and stop execution
+    die("Error: " . $e->getMessage());  
 }
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Start transaction
+        
         $conn->exec("BEGIN TRANSACTION");
 
         // Insert new team
@@ -35,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
         }
 
-        // Commit transaction
+        
         $conn->exec("COMMIT");
 
         echo "<script>alert('Team added successfully!'); window.location.href='Teams.php';</script>";

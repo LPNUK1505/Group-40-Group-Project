@@ -13,10 +13,9 @@ try {
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Start transaction
         $conn->exec("BEGIN TRANSACTION");
 
-        // Step 1: Insert new referee into user table
+        // Insert new referee into user table
         $stmt = $conn->prepare("INSERT INTO user (Firstname, Surname, Password, Username, DateOfBirth, Nationality, PhoneNumber, Email, AccountType, RoleID)
                                 VALUES (:firstname, :surname, :password, :username, :date_of_birth, :nationality, :phone_number, :email, 'Referee', 4)");
 
@@ -31,20 +30,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt->execute();
 
-        // Get the last inserted UserID
+        
         $userId = $conn->lastInsertRowID();
 
-        // Step 2: Insert into referee table with PayPerHour
+        // Insert into referee table with PayPerHour
         $stmt = $conn->prepare("INSERT INTO referee (UserID, PayPerHour) 
                                VALUES (:user_id, :pay_per_hour)");
         $stmt->bindParam(':user_id', $userId);
         $stmt->bindParam(':pay_per_hour', $_POST['pay_per_hour']);
         $stmt->execute();
 
-        // Get the last inserted RefereeID
+        
         $refereeId = $conn->lastInsertRowID();
 
-        // Step 3: Insert referee certificates if any were selected
+        //Insert referee certificates if any were selected
         if (!empty($_POST['certificates'])) {
             foreach ($_POST['certificates'] as $certificateId) {
                 $stmt = $conn->prepare("INSERT INTO referee_certificate (RefereeID, CertificateID, IssueDate, ExpiryDate)
@@ -65,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Commit transaction
+       
         $conn->exec("COMMIT");
 
         echo "Referee added successfully!";
