@@ -1,11 +1,38 @@
 <?php
-require_once '../Include/db.php'; // Include database connection
+require_once '../Include/db.php'; 
 
-// Create a database instance
 $dbInstance = new Database();
 $conn = $dbInstance->getConnection();
 
-// Fetch all teams with manager and field information
+// Handle delete action
+if (isset($_GET['delete_id'])) {
+    $deleteId = $_GET['delete_id'];
+    $deleteQuery = "DELETE FROM Team WHERE TeamID = :teamId";
+    $stmt = $conn->prepare($deleteQuery);
+    $stmt->bindValue(':teamId', $deleteId, SQLITE3_INTEGER);
+    $result = $stmt->execute();
+    
+    if ($result) {
+        header("Location: Teams.php?deleted=1");
+        exit();
+    } else {
+        header("Location: Teams.php?deleted=0");
+        exit();
+    }
+}
+
+// Pagination setup
+$results_per_page = 10;
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+$offset = ($page - 1) * $results_per_page;
+
+// Get total number of teams
+$countQuery = "SELECT COUNT(*) as total FROM Team";
+$countResult = $conn->query($countQuery);
+$total_rows = $countResult->fetchArray(SQLITE3_ASSOC)['total'];
+$total_pages = ceil($total_rows / $results_per_page);
+
+// Fetch teams with pagination
 $query = "
     SELECT 
         t.TeamID,
@@ -27,8 +54,13 @@ $query = "
         Field f ON t.FieldID = f.FieldID
     ORDER BY 
         t.TeamName
+    LIMIT :limit OFFSET :offset
 ";
-$result = $conn->query($query);
+
+$stmt = $conn->prepare($query);
+$stmt->bindValue(':limit', $results_per_page, SQLITE3_INTEGER);
+$stmt->bindValue(':offset', $offset, SQLITE3_INTEGER);
+$result = $stmt->execute();
 
 ?>
 <!DOCTYPE html>
@@ -37,6 +69,156 @@ $result = $conn->query($query);
     <title>Teams</title>
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles.css">
+    <style>
+        .user-content {
+            position: relative;
+            margin-left: 250px;
+            padding: 20px;
+            min-height: calc(100vh - 160px);
+            background-color: #022340;
+            color: #F2F2F2;
+            font-family: Verdana, Tahoma, sans-serif;
+            overflow-x: auto;
+        }
+
+        .users-container {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .users-table th, .users-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #1e4e75;
+        }
+
+        .users-table th {
+            background-color: #03588C;
+            color: white;
+            font-weight: 600;
+        }
+
+        .users-table tr:hover {
+            background-color: rgba(3, 88, 140, 0.2);
+        }
+
+        .add-user-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background: linear-gradient(90deg, #00c4ff, #0059a8);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            margin: 20px 0;
+            transition: background 0.3s ease;
+        }
+
+        .add-user-btn:hover {
+            background: linear-gradient(90deg, #009ecf, #004b91);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn {
+            background-color: #3498db;
+        }
+
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #1e4e75;
+            margin: 0 4px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination a.active {
+            background-color: #00c4ff;
+            color: white;
+            border: 1px solid #00c4ff;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #03588C;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            z-index: 1000;
+            display: none;
+            animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+        }
+
+        .success {
+            background-color: #2ecc71;
+        }
+
+        .error {
+            background-color: #e74c3c;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes fadeOut {
+            from {opacity: 1;}
+            to {opacity: 0;}
+        }
+
+        .no-data {
+            color: #F2F2F2;
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -71,8 +253,8 @@ $result = $conn->query($query);
                 <i class="fa-solid fa-user-plus"></i>Users
             </a>
         </div>
-        <div class="sidebar-button">
-            <a href="Teams.php" class="stayOnPageLink">
+        <div class="sidebar-button active">
+            <a href="Teams.php">
                 <i class="fa-solid fa-square-check"></i>Teams
             </a>
         </div>
@@ -103,22 +285,36 @@ $result = $conn->query($query);
     
     <!-- Main Content -->
     <div class="user-content">
+        <?php 
+        // Show notification if deleted
+        if (isset($_GET['deleted'])) {
+            if ($_GET['deleted'] == 1) {
+                echo '<div class="notification success" id="notification">Team deleted successfully!</div>';
+            } else {
+                echo '<div class="notification error" id="notification">Error deleting team!</div>';
+            }
+        }
+        ?>
+        
         <h2>Teams List</h2>
         <div class="users-container">
             <table class="users-table">
                 <tr>
-                    <th>Team ID</th>
                     <th>Team Name</th>
                     <th>League</th>
                     <th>Manager</th>
                     <th>Home Field</th>
                     <th>Field Location</th>
+                    <th>Actions</th>
                 </tr>
-                <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)) { ?>
+                <?php 
+                $hasRows = false;
+                while ($row = $result->fetchArray(SQLITE3_ASSOC)) { 
+                    $hasRows = true;
+                ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($row['TeamID']); ?></td>
                         <td><?php echo htmlspecialchars($row['TeamName']); ?></td>
-                        <td><?php echo htmlspecialchars($row['LeagueName']); ?></td>
+                        <td><?php echo htmlspecialchars($row['LeagueName'] ?? 'N/A'); ?></td>
                         <td>
                             <?php 
                             if ($row['ManagerFirstName']) {
@@ -128,12 +324,54 @@ $result = $conn->query($query);
                             }
                             ?>
                         </td>
-                        <td><?php echo htmlspecialchars($row['FieldName']); ?></td>
-                        <td><?php echo htmlspecialchars($row['FieldLocation']); ?></td>
+                        <td><?php echo htmlspecialchars($row['FieldName'] ?? 'N/A'); ?></td>
+                        <td><?php echo htmlspecialchars($row['FieldLocation'] ?? 'N/A'); ?></td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="EditTeam.php?id=<?php echo $row['TeamID']; ?>" class="edit-btn">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="#" class="delete-btn" 
+                                   onclick="confirmDelete(<?php echo $row['TeamID']; ?>)">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </a>
+                            </div>
+                        </td>
                     </tr>
                 <?php } ?>
+                
+                <?php if (!$hasRows): ?>
+                    <tr>
+                        <td colspan="6" class="no-data">No teams found in the database</td>
+                    </tr>
+                <?php endif; ?>
             </table>
         </div>
+
+        <!-- Pagination -->
+        <?php if ($total_pages > 1): ?>
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+                <a href="Teams.php?page=<?php echo $page - 1; ?>">&laquo;</a>
+            <?php endif; ?>
+
+            <?php 
+            // Show page numbers
+            $visible_pages = 5;
+            $start = max(1, $page - floor($visible_pages / 2));
+            $end = min($total_pages, $start + $visible_pages - 1);
+            
+            for ($i = $start; $i <= $end; $i++): ?>
+                <a href="Teams.php?page=<?php echo $i; ?>" <?php echo ($i == $page) ? 'class="active"' : ''; ?>>
+                    <?php echo $i; ?>
+                </a>
+            <?php endfor; ?>
+
+            <?php if ($page < $total_pages): ?>
+                <a href="Teams.php?page=<?php echo $page + 1; ?>">&raquo;</a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
 
         <!-- Add Team Button -->
         <a href="AddTeam.php" class="add-user-btn">+ Add Team</a>
@@ -146,7 +384,24 @@ $result = $conn->query($query);
 
     <script src="../sidebar.js"></script>
     <script>
-        window.onload = preventPageRefresh;
+        window.onload = function() {
+            preventPageRefresh();
+            
+            // Show notification if it exists
+            const notification = document.getElementById('notification');
+            if (notification) {
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+        };
+        
+        function confirmDelete(teamId) {
+            if (confirm('Are you sure you want to delete this team? This action cannot be undone.')) {
+                window.location.href = 'Teams.php?delete_id=' + teamId;
+            }
+        }
         
         function preventPageRefresh() {
             document.addEventListener('keydown', function(e) {
@@ -157,4 +412,4 @@ $result = $conn->query($query);
         }
     </script>
 </body>
-</html> 
+</html>

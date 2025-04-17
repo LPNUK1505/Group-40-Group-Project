@@ -1,22 +1,21 @@
-<?php
-include_once __DIR__ . '/../Include/db.php'; // Path to db.php (which includes the Database class)
+    <?php
+include_once __DIR__ . '/../Include/db.php'; 
 
-// Instantiate the Database class to get the connection
 try {
-    $dbInstance = new Database();  // Instantiate the Database class
-    $conn = $dbInstance->getConnection(); // Get the connection
+    $dbInstance = new Database();  
+    $conn = $dbInstance->getConnection(); 
 } catch (Exception $e) {
-    die("Error: " . $e->getMessage());  // If there's an error, display a message and stop execution
+    die("Error: " . $e->getMessage());  
 }
 ?>
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Start transaction
+        
         $conn->exec("BEGIN TRANSACTION");
 
-        // Step 1: Insert new manager into user table
+        //Insert new manager into user table
         $stmt = $conn->prepare("INSERT INTO user (Firstname, Surname, Password, Username, DateOfBirth, Nationality, PhoneNumber, Email, AccountType, RoleID)
                                 VALUES (:firstname, :surname, :password, :username, :date_of_birth, :nationality, :phone_number, :email, 'Manager', 3)");
 
@@ -31,10 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt->execute();
 
-        // Get the last inserted UserID
+        
         $userId = $conn->lastInsertRowID();
 
-        // Step 2: Insert into teammanager table
+        // Insert into teammanager table
         $stmt = $conn->prepare("INSERT INTO teammanager (UserID, StartDate, EndDate) 
                                VALUES (:user_id, :start_date, :end_date)");
         $stmt->bindParam(':user_id', $userId);
@@ -42,10 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindValue(':end_date', null); // No end date initially
         $stmt->execute();
 
-        // Get the last inserted ManagerID
+        
         $managerId = $conn->lastInsertRowID();
 
-        // Step 3: Insert manager certificates if any were selected
+        // Insert manager certificates if any were selected
         if (!empty($_POST['certificates'])) {
             foreach ($_POST['certificates'] as $certificateId) {
                 $stmt = $conn->prepare("INSERT INTO teammanager_certificate (ManagerID, CertificateID, IssueDate, ExpiryDate)
@@ -65,8 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
             }
         }
-
-        // Commit transaction
+        
         $conn->exec("COMMIT");
 
         echo "Manager added successfully!";
