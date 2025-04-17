@@ -328,6 +328,7 @@ $recentMatches = $db->query("
 <body class="dashboard-page">
     <!-- Header -->
     <div class="header">
+        <h1>Dashboard</h1>
         <div class="profile-box">
             <i class="fa fa-user"></i>
             <div>
@@ -351,7 +352,7 @@ $recentMatches = $db->query("
         <div class="sidebar-separator"></div>
         <div class="sidebar-button active">
             <a href="Dashboard.php">
-                <i class="fa-solid fa-people-group"></i>Dashboard
+            <i class="fa-solid fa-house"></i></i>Dashboard
             </a>
         </div>
         <div class="sidebar-button">
@@ -361,7 +362,7 @@ $recentMatches = $db->query("
         </div>
         <div class="sidebar-button">
             <a href="Teams.php">
-                <i class="fa-solid fa-square-check"></i>Teams
+            <i class="fa-solid fa-people-group"></i></i>Teams
             </a>
         </div>
         <div class="sidebar-button">
@@ -371,7 +372,7 @@ $recentMatches = $db->query("
         </div>
         <div class="sidebar-button">
             <a href="Pitches.php">
-                <i class="fa-solid fa-chart-simple"></i>Pitches
+            <i class="fa-solid fa-street-view"></i></i>Pitches
             </a>
         </div>
 
@@ -392,7 +393,6 @@ $recentMatches = $db->query("
 
     <!-- Main Content -->
     <div class="main-content">
-        <h1>Dashboard</h1>
         <h2>Welcome, Fazley!</h2>
 
         <!-- Dashboard Metrics Section -->

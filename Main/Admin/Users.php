@@ -216,20 +216,22 @@ $result = $stmt->execute();
     <!-- Sidebar -->
     <div class="sidebar">
         <img src="../GoikonLogoFinal.png" alt="Goikon Logo" class="goikon-logo">
+
+        <!-- Sidebar Buttons -->
         <div class="sidebar-separator"></div>
-        <div class="sidebar-button">
+        <div class="sidebar-button active">
             <a href="Dashboard.php">
-                <i class="fa-solid fa-people-group"></i>Dashboard
+            <i class="fa-solid fa-house"></i></i>Dashboard
             </a>
         </div>
-        <div class="sidebar-button active">
+        <div class="sidebar-button">
             <a href="Users.php">
                 <i class="fa-solid fa-user-plus"></i>Users
             </a>
         </div>
         <div class="sidebar-button">
             <a href="Teams.php">
-                <i class="fa-solid fa-square-check"></i>Teams
+            <i class="fa-solid fa-people-group"></i></i>Teams
             </a>
         </div>
         <div class="sidebar-button">
@@ -239,7 +241,7 @@ $result = $stmt->execute();
         </div>
         <div class="sidebar-button">
             <a href="Pitches.php">
-                <i class="fa-solid fa-chart-simple"></i>Pitches
+            <i class="fa-solid fa-street-view"></i></i>Pitches
             </a>
         </div>
         <div class="sidebar-toolbox-container">
