@@ -1,3 +1,28 @@
+<?php
+include_once __DIR__ . '/../Include/db.php';
+
+try {
+    $dbInstance = new Database();
+    $conn = $dbInstance->getConnection();
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());
+}
+
+// SQL to get player names and stats
+$sql = "SELECT 
+            User.Firstname, 
+            User.Surname, 
+            Player.Appearances, 
+            Player.Goals, 
+            Player.Assists, 
+            Player.YellowCards, 
+            Player.RedCards
+        FROM Player
+        JOIN User ON Player.UserID = User.UserID";
+
+$result = $conn->query($sql);
+?>
+    
     <!DOCTYPE html>
     <html>
         <!-- JAVA line for 'fontawesome' icons -->
@@ -84,79 +109,25 @@
         <div class="main-content">
             <h1>Player Stats</h1>
             <table border="1" class="player-stats-table">
-    <tr>
-        <th>Player Name</th>
-        <th>Games Played</th>
-        <th>Goals</th>
-        <th>Assists</th>
-        <th>Yellow Cards</th>
-        <th>Red Cards</th>
-    </tr>
-    <tr>
-        <td>John Smith</td>
-        <td>10</td>
-        <td>5</td>
-        <td>3</td>
-        <td>2</td>
-        <td>0</td>
-    </tr>
-    <tr>
-        <td>Michael Johnson</td>
-        <td>12</td>
-        <td>8</td>
-        <td>4</td>
-        <td>1</td>
-        <td>0</td>
-    </tr>
-    <tr>
-        <td>David Williams</td>
-        <td>9</td>
-        <td>3</td>
-        <td>6</td>
-        <td>3</td>
-        <td>1</td>
-    </tr>
-    <tr>
-        <td>Amad Diallo</td>
-        <td>15</td>
-        <td>15</td>
-        <td>4</td>
-        <td>2</td>
-        <td>0</td>
-    </tr>
-    <tr>
-        <td>Robert Davis</td>
-        <td>11</td>
-        <td>6</td>
-        <td>5</td>
-        <td>2</td>
-        <td>1</td>
-    </tr>
-    <tr>
-        <td>Jayden Colwil</td>
-        <td>14</td>
-        <td>9</td>
-        <td>8</td>
-        <td>1</td>
-        <td>0</td>
-    </tr>
-    <tr>
-        <td>Chris Anderson</td>
-        <td>13</td>
-        <td>7</td>
-        <td>4</td>
-        <td>2</td>
-        <td>1</td>
-    </tr>
-    <tr>
-        <td>Emi Martinez</td>
-        <td>10</td>
-        <td>0</td>
-        <td>2</td>
-        <td>2</td>
-        <td>0</td>
-    </tr>
-</table>
+                <tr>
+                    <th>Player Name</th>
+                    <th>Games Played</th>
+                    <th>Goals</th>
+                    <th>Assists</th>
+                    <th>Yellow Cards</th>
+                    <th>Red Cards</th>
+                </tr>
+                <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)) : ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['Firstname'] . ' ' . $row['Surname']); ?></td>
+                        <td><?php echo htmlspecialchars($row['Appearances']); ?></td>
+                        <td><?php echo htmlspecialchars($row['Goals']); ?></td>
+                        <td><?php echo htmlspecialchars($row['Assists']); ?></td>
+                        <td><?php echo htmlspecialchars($row['YellowCards']); ?></td>
+                        <td><?php echo htmlspecialchars($row['RedCards']); ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            </table>
 
 <div class="player-stats-navigation">
     <button class="prev-page">&laquo; Prev</button>
