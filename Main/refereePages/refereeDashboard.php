@@ -1,51 +1,80 @@
 <!DOCTYPE html>
-<html>
-   <!-- JAVA line for 'fontawesome' icons -->
-   <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
-   <link rel="stylesheet" href="../styles.css">
+ <div>
+    <!-- JAVA line for 'fontawesome' icons -->
+    <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../styles.css">
+    <!-- Creates the Header at the top -->
+    <div class="header">
+        <div class="profile-box">
+            <i class="fa fa-user"></i>
+            <div>
+                <div class="name">John Doe</div>
+                <div class="role">Team Manager</div>
+            </div>
+            <i class="fa fa-chevron-down dropdown-icon"></i>
+            <div class="dropdown">
+                <a href="#">Profile</a>
+                <a href="../Homepages/SettingsData.html">Manage Data</a>
+                <a href="../Create Account and Login/Login.php">Sign Out</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Creates the Sidebar on the left hand side -->
+    <div class="sidebar">
+        <img src="../GoikonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
+        <!-- Creates buttons in the Sidebar -->
+        <div class="sidebar-separator"></div>
+        <div class="sidebar-button">
+            <a href="RefereeDashboard.php" class="stayOnPageLink">
+                <i class="fa-solid fa-people-group"></i>Dashboard
+            </a>
+        </div>
+        <div class="sidebar-button">
+            <a href="osterManagement.php">
+                <i class="fa-solid fa-user-plus"></i>Assigned Matches
+            </a>
+        </div>
+        <div class="sidebar-button">
+            <a href="MatchPreperation.html">
+                <i class="fa-solid fa-square-check"></i>Match Results
+            </a>
+        </div>
+        <div class="sidebar-button">
+            <a href="UpcomingMatches.html">
+                <i class="fa-solid fa-calendar"></i>Match Statistics
+            </a>
+        </div>
+        <div class="sidebar-button">
+            <a href="PlayerStats.php">
+                <i class="fa-solid fa-chart-simple"></i>Misconduct Log
+            </a>
+        </div>
 
+        <div class="sidebar-toolbox-container">
+            <div class="sidebar-separator"></div>
+            <div class="sidebar-toolbox-button">
+                <a href="../Homepages/SettingsPersonal.html">
+                    <i class="fa-solid fa-gear"></i>Settings
+                </a>
+            </div>
+            <div class="sidebar-toolbox-button">
+                <a href="../Create Account and Login/Login.php">
+                    <i class="fa-solid fa-right-from-bracket"></i></i>Sign Out
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Creates the Footer at the bottom -->
+    <div class="footer">
+        <!-- Creates buttons in the footer -->
+        <a href="../Homepages/AboutUs.html">About Us</a>
+        <a href="../Homepages/ContactUs.html">Contact Us</a>
+    </div>
 
-   <!-- Creates the Header at the top -->
-   <div class="header">
-       <div class="header-menu-icon">
-           <i class="fa-solid fa-bars"></i>
-       </div>
-
-       <!-- Creates icons for the right hand side of the header -->
-       <div class="header-right-icon">
-           <i class="fa-solid fa-gear"></i>
-           <i class="fa-solid fa-user-large"></i>
-       </div>
-   </div>
-   
-
-   <!-- Creates the Sidebar on the left hand side -->
-   <div class="sidebar">
-       <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
-
-       <!-- Creates buttons in the Sidebar -->
-       <a href="assignedMatches.html">Assigned Matches</a>
-       <a href="misconductLog.html">Misconduct Log</a>
-       <a href="matchResults.html">Match Results</a>
-       <a href="matchStatistics.html">Match Statistics</a>
-       <a href="matchPolicies.html">Match Policies</a>
-       <a href="refereeGuidelines.html">Referee Guidelines</a>
-   </div>
-
-
-   <!-- Creates the Footer at the bottom -->
-   <div class="footer">
-
-       <!-- Creates buttons in the footer -->
-       <a href="#Option 1">Option 1</a>
-       <a href="#Option 2">Option 2</a>
-       <a href="#Option 3">Option 3</a>
-   </div>
-
-
-   <!-- Creates Main Content area -->
-   <div class="main-content">
-   <style>
+    <!-- Creates Main Content area -->
+    <div class="main-content">
+        <style>
             .dashboard {
                 display: grid;
                 grid-template-columns: repeat(12, 1fr);
@@ -57,28 +86,33 @@
                 overflow: hidden;
             }
 
-            #standings { 
-                grid-column: span 3;
-                grid-row: span 4;
+            #standings-prem { 
+                grid-column: 1 / 4;
+                grid-row: 1 / 5;
             }
 
-            #friendly {
-                grid-column: span 3;
-                grid-row: span 2;
-            }
-
-            #recent-matches {
-                grid-column: span 3;
-                grid-row: span 2;
-            }
-
-            #squad-summary {
-                grid-column: span 3;
-                grid-row: span 2;
+            #standings-la-liga {
+                grid-column: 10 / 13;
+                grid-row: 1 / 5;
             }
 
             #fixtures {
-                grid-column: 4 / 13;
+                grid-column: 4 / 7;
+                grid-row: 1 / 3;
+            }
+
+            #referee-resources {
+                grid-column: 7 / 10;
+                grid-row: 1 / 3;
+            }
+
+            #booking-points {
+                grid-column: 4 / 7;
+                grid-row: 3 / 5;
+            }
+
+            #certificate {
+                grid-column: 7 / 10;
                 grid-row: 3 / 5;
             }
 
@@ -350,7 +384,313 @@
 
         </style>
 
+        <h1> Dashboard </h1>
+        <div class="dashboard">
 
-    
-   </div>
+            <div class="card" id="referee-resources">
+                <div class="team-list-header">
+                    <h2>Referee Resources</h2>
+                </div>
+            
+                
+                <div class="scrollable-container">
+                <ul class="team-list">
+                    <li class="team-list-item">
+                        <a href="https://assets.the-afc.com/migration/a/f/afc-refereeing-guidelines-2020-21" target="_blank">
+                            <i class="fa-solid fa-book"></i> AFC Refereeing Guidelines
+                        </a>
+                    </li>
+                    <li class="team-list-item">
+                        <a href="https://downloads.theifab.com/downloads/laws-of-the-game-2024-25?l=en" target="_blank">
+                            <i class="fa-solid fa-scale-balanced"></i> IFAB Laws of the Game
+                        </a>
+                    </li>
+                </ul>
+                </div>
+            </div>
+
+            <?php
+                require_once __DIR__ . '/../Include/db.php';
+                //connect to db
+                try {
+                    $dbInstance = new Database();
+                    $conn = $dbInstance->getConnection();
+                } catch (Exception $e) {
+                    die("Error: " . $e->getMessage());
+                }        
+                
+                $query = "
+                    SELECT 
+                        c.Name,
+                        c.Issuer,
+                        c.Notes,
+                        rc.ExpiryDate
+                    FROM Referee_Certificate rc
+                    JOIN Certificate c ON rc.CertificateID = c.CertificateID
+                    WHERE rc.RefereeID = 3
+                "; 
+            
+            $result = $conn->query($query);
+            ?>
+
+            <div class="card" id="certificate">
+                <div class="team-list-header">
+                    <h2>Referee Certificates</h2>
+                </div>
+
+                <div class="scrollable-container">
+                    <ul class="team-list">
+                        <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)): ?>
+                            <li class="team-list-item">
+                                <div class="team-list-item-text-container">
+                                    <span><strong>Certificate:</strong> <?php echo htmlspecialchars($row['Name']); ?></span><br>
+                                    <span><strong>Issuer:</strong> <?php echo htmlspecialchars($row['Issuer']); ?></span><br>
+                                    <span><strong>Notes:</strong> <?php echo htmlspecialchars($row['Notes']); ?></span><br>
+                                    <span><strong>Expiry Date:</strong> <?php echo date("F j, Y", strtotime($row['ExpiryDate'])); ?></span>
+                                </div>
+                            </li>
+                        <?php endwhile; ?>
+                    </ul>
+                </div>
+                <p>Please contact the Football Federation to renew your certification</p>
+            </div>
+
+                <?php
+                require_once __DIR__ . '/../Include/db.php';
+                try {
+                    $dbInstance = new Database();
+                    $conn = $dbInstance->getConnection();
+                } catch (Exception $e) {
+                    die("Error: " . $e->getMessage());
+                }
+                            
+                $query = "
+                SELECT Team.TeamName, Premier_League_Standings.GamesPlayed, Premier_League_Standings.GoalDifference, Premier_League_Standings.Points
+                FROM Premier_League_Standings
+                JOIN Team ON Premier_League_Standings.TeamID = Team.TeamID
+                ";
+                $result = $conn->query($query);
+                $position = 1;
+                ?>
+
+                <div class="card" id="standings-prem">
+                    <div class="team-list-header">
+                        <h2>Premier League Standings</h2>
+                    </div>
+                    <div class="scrollable-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pos</th>
+                                <th>Team</th>
+                                <th>PL</th>
+                                <th>GD</th>
+                                <th>PTS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)) : ?>
+                                <tr>
+                                    <td><?= $position++ ?></td>
+                                    <td><?= htmlspecialchars($row['TeamName']) ?></td>
+                                    <td><?= $row['GamesPlayed'] ?></td>
+                                    <td><?= $row['GoalDifference'] ?></td>
+                                    <td><?= $row['Points'] ?></td>
+                                </tr>
+                            <?php endwhile; ?>    
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <?php
+                $dbInstance->closeConnection();
+                ?>
+
+                <?php
+                require_once __DIR__ . '/../Include/db.php';
+                //connect to db
+                try {
+                    $dbInstance = new Database();
+                    $conn = $dbInstance->getConnection();
+                } catch (Exception $e) {
+                    die("Error: " . $e->getMessage());
+                }
+                
+                // $db = new SQLite3("Include/goikon_with_PL_standings.db");
+                
+                $query = "
+                SELECT Team.TeamName, La_Liga_Standings.GamesPlayed, La_Liga_Standings.GoalDifference, La_Liga_Standings.Points
+                FROM La_Liga_Standings
+                JOIN Team ON La_Liga_Standings.TeamID = Team.TeamID
+                ";
+                $result = $conn->query($query);
+                $position = 1;
+                ?>
+
+                <div class="card" id="standings-la-liga">
+                    <div class="team-list-header">
+                        <h2>La Liga Standings</h2>
+                    </div>
+                    <div class="scrollable-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pos</th>
+                                <th>Team</th>
+                                <th>PL</th>
+                                <th>GD</th>
+                                <th>PTS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)) : ?>
+                                <tr>
+                                    <td><?= $position++ ?></td>
+                                    <td><?= htmlspecialchars($row['TeamName']) ?></td>
+                                    <td><?= $row['GamesPlayed'] ?></td>
+                                    <td><?= $row['GoalDifference'] ?></td>
+                                    <td><?= $row['Points'] ?></td>
+                                </tr>
+                            <?php endwhile; ?>    
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <?php
+                $dbInstance->closeConnection();
+
+                // $db->close();
+                ?>
+
+
+                <?php
+                require_once __DIR__ . '/../Include/db.php';
+                //connect to db
+                try {
+                    $dbInstance = new Database();
+                    $conn = $dbInstance->getConnection();
+                } catch (Exception $e) {
+                    die("Error: " . $e->getMessage());
+                }        
+                
+                $query = "
+                SELECT 
+                    hm.TeamName AS HomeTeam, 
+                    am.TeamName AS AwayTeam, 
+                    lm.MatchDate,
+                    f.Name AS Stadium
+                FROM League_Match lm
+                JOIN Team hm ON lm.HomeTeamID = hm.TeamID
+                JOIN Team am ON lm.AwayTeamID = am.TeamID
+                JOIN Field f ON hm.FieldID = f.FieldID
+                WHERE lm.Status = 'Scheduled'
+                ORDER BY lm.MatchDate ASC
+            ";
+            
+            
+            
+            $result = $conn->query($query);
+            ?>
+            
+            <div class="card" id="fixtures">
+                <div class="team-list-header">
+                    <h2>Your Upcoming Fixtures</h2>
+                </div>
+            
+                <div class="scrollable-container">
+                    <ul class="team-list">
+                    <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)): ?>
+                        <li class="team-list-item">
+                            <div class="team-list-item-text-container">
+                                <span><?php echo htmlspecialchars($row['HomeTeam'] . " vs " . $row['AwayTeam']); ?></span>
+                                <span class="match-date-time">
+                                    <?php 
+                                        $datetime = date("F j, Y - H:i", strtotime($row['MatchDate']));
+                                        echo htmlspecialchars($datetime); 
+                                    ?>
+                                </span>
+                                <span class="fixture-venue">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <?php echo htmlspecialchars($row['Stadium']); ?>
+                                </span>
+                            </div>
+                        </li>
+                    <?php endwhile; ?>
+
+                    </ul>
+                </div>
+            </div>
+
+
+
+            
+            <?php
+                $dbInstance->closeConnection();
+            ?>
+
+
+            <?php
+                require_once __DIR__ . '/../Include/db.php';
+                //connect to db
+                try {
+                    $dbInstance = new Database();
+                    $conn = $dbInstance->getConnection();
+                } catch (Exception $e) {
+                    die("Error: " . $e->getMessage());
+                }        
+                
+                $query = "
+                    SELECT 
+                        User.Firstname,
+                        User.Surname,
+                        Player.YellowCards,
+                        Player.RedCards
+                    FROM Player
+                    INNER JOIN User ON Player.UserID = User.UserID
+                    ORDER BY (Player.RedCards * 25 + Player.YellowCards * 10) DESC
+                ";
+                            
+                
+            
+            $result = $conn->query($query);
+            echo '<div class="card" id="booking-points">';
+            echo '<div class="team-list-header"><h2>Booking Points</h2></div>';
+            echo '<div class="scrollable-container">';
+            echo '<table>';
+            echo '<thead><tr>
+                    <th>Player</th>
+                    <th>Yellows</th>
+                    <th>Reds</th>
+                    <th>Total Booking Points</th>
+                </tr></thead><tbody>';
+
+            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                $fullname = $row['Firstname'] . ' ' . $row['Surname'];
+                $yellows = $row['YellowCards'];
+                $reds = $row['RedCards'];
+                $points = ($reds * 25) + ($yellows * 10);
+
+                echo "<tr>
+                        <td>{$fullname}</td>
+                        <td>{$yellows}</td>
+                        <td>{$reds}</td>
+                        <td>{$points}</td>
+                    </tr>";
+            }
+
+            echo '</tbody></table>';
+            echo '</div></div>';
+            ?>
+            <?php
+                $dbInstance->closeConnection();
+            ?>
+        </div>
+    </div>
+
+        <!-- JAVA script to change colour of sidebar button referring to active page-->
+        <!-- REQUIRES a class to be added to the active button-CHECK SettingsPersonal.html for an example-->
+        <script src="../sidebar.js"></script>
+        <script>
+            window.onload = preventPageRefresh;
+        </script>
 </html>
