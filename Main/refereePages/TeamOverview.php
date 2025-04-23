@@ -431,16 +431,23 @@
             </div>
 
             <?php
+            require_once __DIR__ . '/../Include/db.php';
             //connect to db
+            try {
+                $dbInstance = new Database();
+                $conn = $dbInstance->getConnection();
+            } catch (Exception $e) {
+                die("Error: " . $e->getMessage());
+            }
             
-            $db = new SQLite3("Include/goikon_with_PL_standings.db");
+            // $db = new SQLite3("Include/goikon_with_PL_standings.db");
             
             $query = "
-            SELECT Team.TeamName, PremierLeagueStandings.GamesPlayed, PremierLeagueStandings.GoalDifference, PremierLeagueStandings.Points
-            FROM PremierLeagueStandings
-            JOIN Team ON PremierLeagueStandings.TeamID = Team.TeamID
+            SELECT Team.TeamName, Premier_League_Standings.GamesPlayed, Premier_League_Standings.GoalDifference, Premier_League_Standings.Points
+            FROM Premier_League_Standings
+            JOIN Team ON Premier_League_Standings.TeamID = Team.TeamID
             ";
-            $result = $db->query($query);
+            $result = $conn->query($query);
             $position = 1;
             ?>
 
@@ -474,36 +481,67 @@
                 </div>
             </div>
             <?php
-            $db->close();
+            $dbInstance->closeConnection();
+
+            // $db->close();
             ?>
 
+            <?php
+            require_once __DIR__ . '/../Include/db.php';
+            //connect to db
+            try {
+                $dbInstance = new Database();
+                $conn = $dbInstance->getConnection();
+            } catch (Exception $e) {
+                die("Error: " . $e->getMessage());
+            }
+            
+            // $db = new SQLite3("Include/goikon_with_PL_standings.db");
+            
+            $query = "
+            SELECT Team.TeamName, La_Liga_Standings.GamesPlayed, La_Liga_Standings.GoalDifference, La_Liga_Standings.Points
+            FROM La_Liga_Standings
+            JOIN Team ON La_Liga_Standings.TeamID = Team.TeamID
+            ";
+            $result = $conn->query($query);
+            $position = 1;
+            ?>
 
             <div class="card" id="standings-la-liga">
                 <div class="team-list-header">
                     <h2>La Liga Standings</h2>
                 </div>
-
                 <div class="scrollable-container">
-                    <table>
-                        <tr><th>Pos</th><th>Team</th><th>Pl</th><th>GD</th><th>Pts</th></tr>
-                        <tr><td>1</td><td>Alpha FC</td><td>10</td><td>+15</td><td>30</td></tr>
-                        <tr><td>2</td><td>Bravo United</td><td>10</td><td>+12</td><td>28</td></tr>
-                        <tr><td>3</td><td>Charlie City</td><td>10</td><td>+9</td><td>24</td></tr>
-                        <tr><td>4</td><td>Delta Rovers</td><td>10</td><td>+8</td><td>22</td></tr>
-                        <tr><td>5</td><td>Echo Town</td><td>10</td><td>+7</td><td>20</td></tr>
-                        <tr><td>6</td><td>Foxtrot United</td><td>10</td><td>+5</td><td>18</td></tr>
-                        <tr><td>7</td><td>Golf Rangers</td><td>10</td><td>+3</td><td>16</td></tr>
-                        <tr><td>8</td><td>Hotel FC</td><td>10</td><td>+1</td><td>14</td></tr>
-                        <tr><td>9</td><td>India Tigers</td><td>10</td><td>-1</td><td>12</td></tr>
-                        <tr><td>10</td><td>Juliet Eagles</td><td>10</td><td>-3</td><td>10</td></tr>
-                        <tr><td>11</td><td>Kilo Wanderers</td><td>10</td><td>-5</td><td>8</td></tr>
-                        <tr><td>12</td><td>Lima United</td><td>10</td><td>-7</td><td>6</td></tr>
-                        <tr><td>13</td><td>Mike City</td><td>10</td><td>-9</td><td>4</td></tr>
-                        <tr><td>14</td><td>November FC</td><td>10</td><td>-12</td><td>2</td></tr>
-                        <tr><td>15</td><td>Oscar Knights</td><td>10</td><td>-15</td><td>0</td></tr>
-                    </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Team</th>
+                            <th>PL</th>
+                            <th>GD</th>
+                            <th>PTS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)) : ?>
+                            <tr>
+                                <td><?= $position++ ?></td>
+                                <td><?= htmlspecialchars($row['TeamName']) ?></td>
+                                <td><?= $row['GamesPlayed'] ?></td>
+                                <td><?= $row['GoalDifference'] ?></td>
+                                <td><?= $row['Points'] ?></td>
+                            </tr>
+                        <?php endwhile; ?>    
+                    </tbody>
+                </table>
                 </div>
             </div>
+            <?php
+            $dbInstance->closeConnection();
+
+            // $db->close();
+            ?>
+
 
             <div class="card" id="friendly">
                 <div class="team-list-header">
