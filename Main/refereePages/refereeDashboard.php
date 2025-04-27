@@ -1,5 +1,4 @@
 <!DOCTYPE html>
- <div>
     <!-- JAVA line for 'fontawesome' icons -->
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles.css">
@@ -25,13 +24,14 @@
         <img src="../GoikonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
         <!-- Creates buttons in the Sidebar -->
         <div class="sidebar-separator"></div>
+
         <div class="sidebar-button">
             <a href="RefereeDashboard.php" class="stayOnPageLink">
                 <i class="fa-solid fa-people-group"></i>Dashboard
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="osterManagement.php">
+            <a href="AssignedMatches.php">
                 <i class="fa-solid fa-user-plus"></i>Assigned Matches
             </a>
         </div>
