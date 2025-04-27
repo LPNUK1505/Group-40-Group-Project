@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<div>
     <!-- JAVA line for 'fontawesome' icons -->
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles.css">
@@ -38,7 +37,7 @@
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="MatchPreperation.html">
+            <a href="MatchResults.php">
                 <i class="fa-solid fa-square-check"></i>Match Results
             </a>
         </div>
@@ -77,7 +76,7 @@
 
     <style>
     .fixtures-container {
-        padding: 20px;
+        padding: 10px;
     }
 
     .team-list-header h2 {
@@ -242,72 +241,72 @@ window.onload = function() {
 
    <!-- Creates Main Content area -->
    <div class="main-content">
-    <?php
-    require_once __DIR__ . '/../Include/db.php';
-    // connect to db
-    try {
-        $dbInstance = new Database();
-        $conn = $dbInstance->getConnection();
-    } catch (Exception $e) {
-        die("Error: " . $e->getMessage());
-    }
-    ?>
+        <?php
+        require_once __DIR__ . '/../Include/db.php';
+        // connect to db
+        try {
+            $dbInstance = new Database();
+            $conn = $dbInstance->getConnection();
+        } catch (Exception $e) {
+            die("Error: " . $e->getMessage());
+        }
+        ?>
 
-    <?php
-    $query = "
-        SELECT 
-            hm.TeamName AS HomeTeam, 
-            am.TeamName AS AwayTeam, 
-            lm.MatchDate,
-            f.Name AS Stadium
-        FROM League_Match lm
-        JOIN Team hm ON lm.HomeTeamID = hm.TeamID
-        JOIN Team am ON lm.AwayTeamID = am.TeamID
-        JOIN Field f ON hm.FieldID = f.FieldID
-        JOIN Referee_Booking rb ON lm.LeagueMatchID = rb.LeagueMatchID
-        WHERE lm.Status = 'Scheduled'
-        AND rb.RefereeID = 3
-        ORDER BY lm.MatchDate ASC
-    ";
+        <?php
+        $query = "
+            SELECT 
+                hm.TeamName AS HomeTeam, 
+                am.TeamName AS AwayTeam, 
+                lm.MatchDate,
+                f.Name AS Stadium
+            FROM League_Match lm
+            JOIN Team hm ON lm.HomeTeamID = hm.TeamID
+            JOIN Team am ON lm.AwayTeamID = am.TeamID
+            JOIN Field f ON hm.FieldID = f.FieldID
+            JOIN Referee_Booking rb ON lm.LeagueMatchID = rb.LeagueMatchID
+            WHERE lm.Status = 'Scheduled'
+            AND rb.RefereeID = 3
+            ORDER BY lm.MatchDate ASC
+        ";
 
-    $result = $conn->query($query);
-    ?>
+        $result = $conn->query($query);
+        ?>
 
-    <div class="fixtures-container">
-        <div class="team-list-header">
-            <h2>Your Upcoming Fixtures</h2>
+        <div class="fixtures-container">
+            <div class="team-list-header">
+                <h2>Your Upcoming Fixtures</h2>
+            </div>
+
+            <div class="cards-grid" id="cardsGrid">
+                <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)): ?>
+                    <div class="fixture-card">
+                        <h3 class="fixture-teams">
+                            <span class="home-team"><?php echo htmlspecialchars($row['HomeTeam']); ?></span>
+                            <i class="fa-solid fa-v"></i> <!-- FontAwesome VS icon -->
+                            <span class="away-team"><?php echo htmlspecialchars($row['AwayTeam']); ?></span>
+                        </h3>
+                        <p class="fixture-date">
+                            <?php 
+                                $datetime = date("F j, Y - H:i", strtotime($row['MatchDate']));
+                                echo htmlspecialchars($datetime); 
+                            ?>
+                        </p>
+                        <p class="fixture-stadium">
+                            <i class="fa-solid fa-location-dot"></i> 
+                            <?php echo htmlspecialchars($row['Stadium']); ?>
+                        </p>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+
+            <div class="pagination-buttons">
+                <button id="prevPage" disabled>Previous</button>
+                <button id="nextPage">Next</button>
+            </div>
         </div>
 
-        <div class="cards-grid" id="cardsGrid">
-            <?php while ($row = $result->fetchArray(SQLITE3_ASSOC)): ?>
-                <div class="fixture-card">
-                    <h3 class="fixture-teams">
-                        <span class="home-team"><?php echo htmlspecialchars($row['HomeTeam']); ?></span>
-                        <i class="fa-solid fa-v"></i> <!-- FontAwesome VS icon -->
-                        <span class="away-team"><?php echo htmlspecialchars($row['AwayTeam']); ?></span>
-                    </h3>
-                    <p class="fixture-date">
-                        <?php 
-                            $datetime = date("F j, Y - H:i", strtotime($row['MatchDate']));
-                            echo htmlspecialchars($datetime); 
-                        ?>
-                    </p>
-                    <p class="fixture-stadium">
-                        <i class="fa-solid fa-location-dot"></i> 
-                        <?php echo htmlspecialchars($row['Stadium']); ?>
-                    </p>
-                </div>
-            <?php endwhile; ?>
-        </div>
-
-        <div class="pagination-buttons">
-            <button id="prevPage" disabled>Previous</button>
-            <button id="nextPage">Next</button>
-        </div>
-    </div>
-
-    <?php
-    $dbInstance->closeConnection();
-    ?>
+        <?php
+        $dbInstance->closeConnection();
+        ?>
     </div>
 </html>

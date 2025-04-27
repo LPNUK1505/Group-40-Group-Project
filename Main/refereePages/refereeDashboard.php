@@ -36,7 +36,7 @@
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="MatchPreperation.html">
+            <a href="MatchResults.php">
                 <i class="fa-solid fa-square-check"></i>Match Results
             </a>
         </div>
