@@ -60,7 +60,7 @@ function loginUser($user) {
             header("Location: ../Player/PlayerOverview.php");
             break;
         case 'referee':
-            header("Location: ../refereePages/refereeDashboard.html");
+            header("Location: ../refereePages/refereeDashboard.php");
             break;
         default:
             header("Location: ../index.php");
