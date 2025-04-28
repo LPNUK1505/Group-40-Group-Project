@@ -1,3 +1,75 @@
+<?php
+session_start();
+require_once '../Include/db.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    try {
+        $dbInstance = new Database();
+        $conn = $dbInstance->getConnection();
+
+        $stmt = $conn->prepare("SELECT UserID, Username, Password, AccountType FROM User WHERE Username = ?");
+        $stmt->bindValue(1, $username, SQLITE3_TEXT);
+        $result = $stmt->execute();
+        $user = $result->fetchArray(SQLITE3_ASSOC);
+
+        if ($user) {
+            // Check if password is hashed
+            if (password_verify($password, $user['Password'])) {
+                // Password is correct (hashed)
+                loginUser($user);
+            } 
+            // Temporary transition check - remove after all passwords are hashed
+            elseif ($password === $user['Password']) {
+                // Plaintext match (temporary during transition)
+                loginUser($user);
+                
+                // Optional: Upgrade to hashed password
+                $hashed = password_hash($password, PASSWORD_DEFAULT);
+                $upgradeStmt = $conn->prepare("UPDATE User SET Password = ? WHERE UserID = ?");
+                $upgradeStmt->bindValue(1, $hashed, SQLITE3_TEXT);
+                $upgradeStmt->bindValue(2, $user['UserID'], SQLITE3_INTEGER);
+                $upgradeStmt->execute();
+            } else {
+                $error = "Invalid username or password";
+            }
+        } else {
+            $error = "Invalid username or password";
+        }
+    } catch (Exception $e) {
+        $error = "Database error: " . $e->getMessage();
+    }
+}
+
+function loginUser($user) {
+    $_SESSION['user_id'] = $user['UserID'];
+    $_SESSION['username'] = $user['Username'];
+    $_SESSION['account_type'] = $user['AccountType'];
+    
+    // Redirect based on account type
+    switch (strtolower($user['AccountType'])) {
+        case 'admin':
+            header("Location: ../Admin/Dashboard.php");
+            break;
+        case 'team manager':
+            header("Location: ../Team Manager/TeamOverview.html");
+            break;
+        case 'player':
+            header("Location: ../Player/PlayerOverview.php");
+            break;
+        case 'referee':
+            header("Location: ../refereePages/refereeDashboard.html");
+            break;
+        default:
+            header("Location: ../index.php");
+    }
+    exit();
+}
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,13 +91,14 @@
 
 <div class="main-content">
     <h1>Login</h1>
-    <form action="../Team Manager/TeamOverview.html" id="login-form">
+    <form method="post" id="login-form">
         <input type="text" name="username" placeholder="Username" required><br>
         <input type="password" name="password" placeholder="Password" required><br>
-        <?php if (isset($_GET['error'])) echo "<p style='color:red;'>{$_GET['error']}</p>"; ?>
+        <?php if (!empty($error)): ?>
+            <p style='color:red;'><?php echo htmlspecialchars($error); ?></p>
+        <?php endif; ?>
         <button type="submit">Login</button>
         <p><a href="CreateAccount.php" class="create-account">Create Account</a></p>
-
     </form>
 </div>
 
