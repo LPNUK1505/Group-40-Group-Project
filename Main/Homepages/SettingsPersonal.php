@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
             <i class="fa fa-chevron-down dropdown-icon"></i>
             <div class="dropdown">
                 <a href="#">Profile</a>
-                <a href="../Homepages/SettingsData.html">Manage Data</a>
+                <a href="../Homepages/SettingsData.php">Manage Data</a>
                 <a href="../Create Account and Login/Login.php">Sign Out</a>
             </div>
         </div>
@@ -101,17 +101,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
         <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
         <!-- Creates buttons in the Sidebar -->
         <div class="sidebar-button">
-            <a href="SettingsPersonal.html" class="stayOnPageLink">
+            <a href="SettingsPersonal.php" class="stayOnPageLink">
                 <i class="fa-solid fa-user"></i>Personal Details
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="SettingsSecurity.html">
+            <a href="SettingsSecurity.php">
                 <i class="fa-solid fa-unlock-keyhole"></i>Account Security
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="SettingsData.html">
+            <a href="SettingsData.php">
                 <i class="fa-solid fa-cloud-arrow-up"></i>Manage Data
             </a>
         </div>
@@ -124,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
             <div class="sidebar-toolbox-button">
-                <a href="../Homepages/SettingsPersonal.html">
+                <a href="../Homepages/SettingsPersonal.php">
                     <i class="fa-solid fa-gear"></i>Settings
                 </a>
             </div>
@@ -140,8 +140,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
    <div class="footer">
 
        <!-- Creates buttons in the footer -->
-       <a href="AboutUs.html">About Us</a>
-       <a href="ContactUs.html">Contact Us</a>
+       <a href="AboutUs.php">About Us</a>
+       <a href="ContactUs.php">Contact Us</a>
    </div>
 
 
