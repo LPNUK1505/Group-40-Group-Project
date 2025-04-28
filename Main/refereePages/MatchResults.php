@@ -42,12 +42,7 @@
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="UpcomingMatches.html">
-                <i class="fa-solid fa-calendar"></i>Match Statistics
-            </a>
-        </div>
-        <div class="sidebar-button">
-            <a href="PlayerStats.php">
+            <a href="MisconductLog.php">
                 <i class="fa-solid fa-chart-simple"></i>Misconduct Log
             </a>
         </div>
@@ -149,6 +144,7 @@
 
     /* Add Notes button */
     .add-notes-btn {
+        align-self: flex-end;
         background-color: #0056b3;
         color: white;
         border: none;
@@ -329,4 +325,12 @@
         }
         </script>
    </div>
+
+        <!-- JAVA script to change colour of sidebar button referring to active page-->
+        <!-- REQUIRES a class to be added to the active button-CHECK SettingsPersonal.html for an example-->
+        <script src="../sidebar.js"></script>
+        <script>
+            window.onload = preventPageRefresh;
+        </script>
+
 </html>

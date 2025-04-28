@@ -41,12 +41,7 @@
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="UpcomingMatches.html">
-                <i class="fa-solid fa-calendar"></i>Match Statistics
-            </a>
-        </div>
-        <div class="sidebar-button">
-            <a href="PlayerStats.php">
+            <a href="MisconductLog.php">
                 <i class="fa-solid fa-chart-simple"></i>Misconduct Log
             </a>
         </div>

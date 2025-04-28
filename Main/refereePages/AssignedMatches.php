@@ -42,12 +42,7 @@
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="UpcomingMatches.html">
-                <i class="fa-solid fa-calendar"></i>Match Statistics
-            </a>
-        </div>
-        <div class="sidebar-button">
-            <a href="PlayerStats.php">
+            <a href="MisconductLog.php">
                 <i class="fa-solid fa-chart-simple"></i>Misconduct Log
             </a>
         </div>
@@ -234,9 +229,11 @@ window.onload = function() {
 };
 
 </script>
-
-
-
+<!-- JAVA script to change colour of sidebar button referring to active page-->
+<!-- REQUIRES a class to be added to the active button-CHECK SettingsPersonal.html for an example-->
+<script src="../sidebar.js">
+     window.onload = preventPageRefresh;
+</script>
 
 
    <!-- Creates Main Content area -->
