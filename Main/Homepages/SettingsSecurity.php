@@ -1,3 +1,69 @@
+<?php
+include_once __DIR__ . '/../Include/db.php'; // Path to db.php (which includes the Database class)
+
+// Instantiate the Database class to get the connection
+try {
+    $dbInstance = new Database();  // Instantiate the Database class
+    $conn = $dbInstance->getConnection(); // Get the connection
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());  // If there's an error, display a message and stop execution
+}
+
+// Initialize variables for the form
+$userID = '8';
+
+// Fetch the current user's details from the database to prefill the form
+$sql = "SELECT *
+        FROM User
+        WHERE UserID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bindValue(1, $userID, SQLITE3_INTEGER);  // Correct way to bind in SQLite
+$result = $stmt->execute();
+
+if ($result) {
+    $row = $result->fetchArray(SQLITE3_ASSOC);
+    if ($row) {
+        $firstname = $row['Firstname'];
+        $surname = $row['Surname'];
+        $role = $row['AccountType'];
+        $password = $row['Password'];
+
+
+
+    } else {
+        die("User not found.");
+    }
+} else {
+    die("Error fetching user data: " . $conn->lastErrorMsg());
+}
+
+// Handle form submission for updating the user's details
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
+    // Sanitize and validate input data
+    $password = isset($_POST['password']) ? $_POST['password'] : '';
+    $passwordconfirm = isset($_POST['passwordconfirm']) ? $_POST['passwordconfirm'] : '';
+
+
+    // Update the User table
+    if ($userID) {
+        if ($password === $passwordconfirm) {
+
+            // Update password query
+            $updatePasswordSql = "UPDATE User
+                            SET Password = ?
+                            WHERE UserID = ?";
+            $stmt = $conn->prepare($updatePasswordSql);
+            $stmt->bindParam(1, $password, SQLITE3_TEXT);
+            $stmt->bindParam(2, $userID, SQLITE3_INTEGER);
+            $stmt->execute();
+        }
+    }
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html>
    <!-- JAVA line for 'fontawesome' icons -->
@@ -10,13 +76,13 @@
         <div class="profile-box">
             <i class="fa fa-user"></i>
             <div>
-                <div class="name">John Doe</div>
-                <div class="role">Team Manager</div>
+                <div class="name"><?php echo $firstname . ' ' . $surname; ?></div>
+                <div class="role"><?php echo $role; ?></div>
             </div>
             <i class="fa fa-chevron-down dropdown-icon"></i>
             <div class="dropdown">
                 <a href="#">Profile</a>
-                <a href="../Homepages/SettingsData.html">Manage Data</a>
+                <a href="../Homepages/SettingsData.php">Manage Data</a>
                 <a href="../Create Account and Login/Login.php">Sign Out</a>
             </div>
         </div>
@@ -28,25 +94,30 @@
         <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
         <!-- Creates buttons in the Sidebar -->
         <div class="sidebar-button">
-            <a href="SettingsPersonal.html">
+            <a href="SettingsPersonal.php">
                 <i class="fa-solid fa-user"></i>Personal Details
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="SettingsSecurity.html" class="stayOnPageLink">
+            <a href="SettingsSecurity.php" class="stayOnPageLink">
                 <i class="fa-solid fa-unlock-keyhole"></i>Account Security
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="SettingsData.html">
+            <a href="SettingsData.php">
                 <i class="fa-solid fa-cloud-arrow-up"></i>Manage Data
+            </a>
+        </div>
+        <div class="sidebar-button">
+            <a onclick="history.back()">
+                <i class="fa-solid fa-backward"></i>Back
             </a>
         </div>
 
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
             <div class="sidebar-toolbox-button">
-                <a href="../Homepages/SettingsPersonal.html">
+                <a href="../Homepages/SettingsPersonal.php">
                     <i class="fa-solid fa-gear"></i>Settings
                 </a>
             </div>
@@ -62,14 +133,14 @@
    <div class="footer">
 
        <!-- Creates buttons in the footer -->
-       <a href="AboutUs.html">About Us</a>
-       <a href="ContactUs.html">Contact Us</a>
+       <a href="AboutUs.php">About Us</a>
+       <a href="ContactUs.php">Contact Us</a>
    </div>
 
 
    <!-- Creates Main Content area -->
    <div class="main-content">
-        <form>
+        <form method="POST">
             <style>
                 form{
                     text-align: center;
@@ -242,35 +313,16 @@
                     <div class="password_group">
                         <label for="Password">*Password</label>
                         <i class="fa-solid fa-key"></i>
-                        <input type="text" id="Password" name="Password" required>
+                        <input type="password" id="password" name="password" value="<?php echo htmlspecialchars($password); ?>"required>
                     </div>
                     <div class="password_group">
                         <label for="PasswordConfirm">*Confirm Password</label>
                         <i class="fa-solid fa-key"></i>
-                        <input type="text" id="PasswordConfirm" name="PasswordConfirm" required>
+                        <input type="password" id="passwordconfirm" name="passwordconfirm" required>
                     </div>
                 </div>
 
-                <div class="line_label">
-                    <hr>
-                    <span>2 Factor Authentication</span>
-                    <hr>
-                </div>
-                <div class="form_row">
-                    <div class="TwoFA_group">
-                        <label for="2FA">*2FA</label>
-
-                        <div class="TwoFA_group_group">
-                            <i class="fa-solid fa-shield-halved"></i>
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit">Save Changes</button>
+                <button type="submit" name="save">Save Changes</button>
             </h3>
         </form>
     </div>

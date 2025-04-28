@@ -1,3 +1,76 @@
+<?php
+include_once __DIR__ . '/../Include/db.php'; // Path to db.php (which includes the Database class)
+
+// Instantiate the Database class to get the connection
+try {
+    $dbInstance = new Database();  // Instantiate the Database class
+    $conn = $dbInstance->getConnection(); // Get the connection
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());  // If there's an error, display a message and stop execution
+}
+
+// Initialize variables for the form
+$userID = '8';
+
+// Fetch the current user's details from the database to prefill the form
+$sql = "SELECT *
+        FROM User
+        WHERE UserID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bindValue(1, $userID, SQLITE3_INTEGER);  // Correct way to bind in SQLite
+$result = $stmt->execute();
+
+if ($result) {
+    $row = $result->fetchArray(SQLITE3_ASSOC);
+    if ($row) {
+        $firstname = $row['Firstname'];
+        $surname = $row['Surname'];
+        $email = $row['Email'];
+        $phoneNum = $row['PhoneNumber'];
+        $dob = $row['DateOfBirth'];
+        $nationality = $row['Nationality'];
+        $role = $row['AccountType'];
+
+    } else {
+        die("User not found.");
+    }
+} else {
+    die("Error fetching user data: " . $conn->lastErrorMsg());
+}
+
+// Handle form submission for updating the user's details
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
+    // Sanitize and validate input data
+    $firstname = isset($_POST['firstname']) ? $_POST['firstname'] : '';
+    $surname = isset($_POST['surname']) ? $_POST['surname'] : '';
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $phoneNum = isset($_POST['phoneNum']) ? $_POST['phoneNum'] : '';
+    $dob = isset($_POST['dob']) ? $_POST['dob'] : '';
+    $nationality = isset($_POST['nationality']) ? $_POST['nationality'] : '';
+
+
+    // Update the User table
+    if ($userID) {
+        $updateUserSql = "UPDATE User
+                        SET Firstname = ?, Surname = ?, Email = ?, PhoneNumber = ?, DateOfBirth = ?, Nationality = ?
+                        WHERE UserID = ?";
+        $stmt = $conn->prepare($updateUserSql);
+        $stmt->bindValue(1, $firstname, SQLITE3_TEXT);
+        $stmt->bindValue(2, $surname, SQLITE3_TEXT);
+        $stmt->bindValue(3, $email, SQLITE3_TEXT);
+        $stmt->bindValue(4, $phoneNum, SQLITE3_TEXT);
+        $stmt->bindValue(5, $dob, SQLITE3_TEXT);
+        $stmt->bindValue(6, $nationality, SQLITE3_TEXT);
+        $stmt->bindValue(7, $userID, SQLITE3_INTEGER);
+
+        $stmt->execute();
+    }
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html>
    <!-- JAVA line for 'fontawesome' icons -->
@@ -10,13 +83,13 @@
         <div class="profile-box">
             <i class="fa fa-user"></i>
             <div>
-                <div class="name">John Doe</div>
-                <div class="role">Team Manager</div>
+                <div class="name"><?php echo $firstname . ' ' . $surname; ?></div>
+                <div class="role"><?php echo $role; ?></div>
             </div>
             <i class="fa fa-chevron-down dropdown-icon"></i>
             <div class="dropdown">
                 <a href="#">Profile</a>
-                <a href="../Homepages/SettingsData.html">Manage Data</a>
+                <a href="../Homepages/SettingsData.php">Manage Data</a>
                 <a href="../Create Account and Login/Login.php">Sign Out</a>
             </div>
         </div>
@@ -28,25 +101,30 @@
         <img src="../GoIkonLogoFinal.png" alt="Goikon Logo" class = "goikon-logo">
         <!-- Creates buttons in the Sidebar -->
         <div class="sidebar-button">
-            <a href="SettingsPersonal.html" class="stayOnPageLink">
+            <a href="SettingsPersonal.php" class="stayOnPageLink">
                 <i class="fa-solid fa-user"></i>Personal Details
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="SettingsSecurity.html">
+            <a href="SettingsSecurity.php">
                 <i class="fa-solid fa-unlock-keyhole"></i>Account Security
             </a>
         </div>
         <div class="sidebar-button">
-            <a href="SettingsData.html">
+            <a href="SettingsData.php">
                 <i class="fa-solid fa-cloud-arrow-up"></i>Manage Data
+            </a>
+        </div>
+        <div class="sidebar-button">
+            <a onclick="history.back()">
+                <i class="fa-solid fa-backward"></i>Back
             </a>
         </div>
 
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
             <div class="sidebar-toolbox-button">
-                <a href="../Homepages/SettingsPersonal.html">
+                <a href="../Homepages/SettingsPersonal.php">
                     <i class="fa-solid fa-gear"></i>Settings
                 </a>
             </div>
@@ -62,14 +140,14 @@
    <div class="footer">
 
        <!-- Creates buttons in the footer -->
-       <a href="AboutUs.html">About Us</a>
-       <a href="ContactUs.html">Contact Us</a>
+       <a href="AboutUs.php">About Us</a>
+       <a href="ContactUs.php">Contact Us</a>
    </div>
 
 
    <!-- Creates Main Content area -->
    <div class="main-content">
-        <form>
+        <form method="POST">
             <style>
                 form{
                     text-align: center;
@@ -180,12 +258,12 @@
                     <div class="name_group">
                         <label for="Firstname">*First Name</label>
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" id="Firstname" name="Firstname" required>
+                        <input type="text" id="firstname" name="firstname" value="<?php echo htmlspecialchars($firstname); ?>" required>
                     </div>
                     <div class="name_group">
                         <label for="Surname">*Surname</label>
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" id="Surname" name="Surname" required>
+                        <input type="text" id="surname" name="surname" value="<?php echo htmlspecialchars($surname); ?>" required>
                     </div>
                 </div>
 
@@ -198,12 +276,12 @@
                     <div class="contact_group">
                         <label for="email">*Email</label>
                         <i class="fa-solid fa-envelope"></i>
-                        <input type="email" id="email" name="email" required>
+                        <input type="text" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
                     </div>
                     <div class="contact_group">
                         <label for="phone-num">*Phone Number</label>
                         <i class="fa-solid fa-phone"></i>
-                        <input type="tel" id="phone-num" name="phone-num" required>
+                        <input type="text" id="phoneNum" name="phoneNum" value="<?php echo htmlspecialchars($phoneNum); ?>" required>
                     </div>
                 </div>
 
@@ -215,12 +293,15 @@
                 <div class="form_row">
                     <div class="additional_group">
                         <label for="dob">*Date of Birth</label>
-                        <input type="date" id="dob" name="dob" required>
+                        <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($dob); ?>" required>
                     </div>
                     <div class="additional_group">
                         <label for="nationality">*Nationality</label>
                         <select id="nationality" name="nationality">
-                            <option value="">Select Country</option>
+                        <option value="">Select Country</option>
+                            <option value="<?php echo htmlspecialchars($nationality); ?>" selected>
+                                <?php echo htmlspecialchars($nationality); ?>
+                            </option>
                         </select>
                     </div>
 
@@ -244,7 +325,7 @@
                     </script>
                 </div>
 
-                <button type="submit">Save Changes</button>
+                <button type="submit" name="save">Save Changes</button>
             </h3>
         </form>
     </div>
