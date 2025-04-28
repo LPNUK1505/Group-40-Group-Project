@@ -1,39 +1,35 @@
 <?php
-// PlayerOverview.php - Optimized for new database schema
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include_once __DIR__ . '/../Include/db.php';
-try {
-    $dbInstance = new Database();
-    $conn = $dbInstance->getConnection();
-} catch (Exception $e) {
-    die("Error: " . $e->getMessage());
-}
-?>
-
-// Initialize profile display
 $userDisplay = ['name' => 'Guest', 'role' => 'Not Logged In'];
+$player = [];
+$teamPlayers = [];
+$recent = [];
+$upcoming = [];
+$leagueStandings = [];
+$dbInstance = null;
 
-
-<?php
 try {
-    session_start();
+    include_once __DIR__ . '/../Include/db.php';
     $dbInstance = new Database();
     $db = $dbInstance->getConnection();
-    
-    // 1. Get user profile info
+    session_start();
+
     if (isset($_SESSION['user_id'])) {
+        $userId = $_SESSION['user_id'];
+        
+        // 1. Get user profile
         $stmt = $db->prepare("
             SELECT u.UserID, u.Firstname, u.Surname, u.AccountType, 
-                   t.TeamName, tm.ManagerID
+                   t.TeamID, t.TeamName, t.LeagueID, tm.ManagerID
             FROM User u
             LEFT JOIN Player p ON u.UserID = p.UserID
             LEFT JOIN Team t ON p.TeamID = t.TeamID
             LEFT JOIN TeamManager tm ON u.UserID = tm.UserID
             WHERE u.UserID = :user_id
         ");
-        $stmt->bindValue(':user_id', $_SESSION['user_id'], SQLITE3_INTEGER);
+        $stmt->bindValue(':user_id', $userId, SQLITE3_INTEGER);
         $user = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
         
         if ($user) {
@@ -50,116 +46,111 @@ try {
                         $userDisplay['role'] = "Team Manager" . ($team['TeamName'] ? " - " . $team['TeamName'] : "");
                     }
                     break;
-                case 'referee':
-                    $userDisplay['role'] = "Referee";
-                    break;
-                case 'admin':
-                    $userDisplay['role'] = "Administrator";
-                    break;
                 default:
                     $userDisplay['role'] = ucfirst($user['AccountType']);
             }
+
+            // 2. Get player stats
+            if (strtolower($user['AccountType']) === 'player') {
+                $stmt = $db->prepare("
+                    SELECT p.*, t.TeamName 
+                    FROM Player p
+                    JOIN Team t ON p.TeamID = t.TeamID 
+                    WHERE p.UserID = :user_id
+                ");
+                $stmt->bindValue(':user_id', $userId, SQLITE3_INTEGER);
+                $player = $stmt->execute()->fetchArray(SQLITE3_ASSOC) ?: [];
+
+                // 3. Get team roster
+                $stmt = $db->prepare("
+                    SELECT p.PlayerID, u.Firstname || ' ' || u.Surname AS PlayerName, 
+                           p.Goals, p.Assists
+                    FROM Player p
+                    JOIN User u ON p.UserID = u.UserID
+                    WHERE p.TeamID = :team_id
+                    ORDER BY p.Goals DESC
+                ");
+                $stmt->bindValue(':team_id', $user['TeamID'], SQLITE3_INTEGER);
+                $teamPlayers = [];
+                while ($row = $stmt->execute()->fetchArray(SQLITE3_ASSOC)) {
+                    $teamPlayers[] = $row;
+                }
+
+                // 4. Get recent matches (last 5 completed)
+                $stmt = $db->prepare("
+                    SELECT 
+                        t1.TeamName AS HomeTeam, 
+                        t2.TeamName AS AwayTeam,
+                        lm.MatchDate,
+                        lm.HomeGoals,
+                        lm.AwayGoals,
+                        f.Name AS Venue
+                    FROM League_Match lm
+                    JOIN Team t1 ON lm.HomeTeamID = t1.TeamID
+                    JOIN Team t2 ON lm.AwayTeamID = t2.TeamID
+                    JOIN Field f ON lm.FieldID = f.FieldID
+                    WHERE (t1.TeamID = :team_id OR t2.TeamID = :team_id)
+                    AND lm.Status = 'Completed'
+                    ORDER BY lm.MatchDate DESC
+                    LIMIT 5
+                ");
+                $stmt->bindValue(':team_id', $user['TeamID'], SQLITE3_INTEGER);
+                $recent = [];
+                while ($row = $stmt->execute()->fetchArray(SQLITE3_ASSOC)) {
+                    $recent[] = $row;
+                }
+
+                // 5. Get upcoming matches (next 5 scheduled)
+                $stmt = $db->prepare("
+                    SELECT 
+                        t1.TeamName AS HomeTeam, 
+                        t2.TeamName AS AwayTeam,
+                        lm.MatchDate,
+                        f.Name AS Venue
+                    FROM League_Match lm
+                    JOIN Team t1 ON lm.HomeTeamID = t1.TeamID
+                    JOIN Team t2 ON lm.AwayTeamID = t2.TeamID
+                    JOIN Field f ON lm.FieldID = f.FieldID
+                    WHERE (t1.TeamID = :team_id OR t2.TeamID = :team_id)
+                    AND lm.Status = 'Scheduled'
+                    AND lm.MatchDate >= date('now')
+                    ORDER BY lm.MatchDate ASC
+                    LIMIT 5
+                ");
+                $stmt->bindValue(':team_id', $user['TeamID'], SQLITE3_INTEGER);
+                $upcoming = [];
+                while ($row = $stmt->execute()->fetchArray(SQLITE3_ASSOC)) {
+                    $upcoming[] = $row;
+                }
+
+                // 6. Get league standings
+                $leagueTable = ($user['LeagueID'] == 1) ? 'Premier_League_Standings' : 'La_Liga_Standings';
+                $stmt = $db->prepare("
+                    SELECT t.TeamName, s.Points, s.GoalDifference, s.GamesPlayed
+                    FROM {$leagueTable} s
+                    JOIN Team t ON s.TeamID = t.TeamID
+                    WHERE t.LeagueID = :league_id
+                    ORDER BY s.Points DESC, s.GoalDifference DESC
+                ");
+                $stmt->bindValue(':league_id', $user['LeagueID'], SQLITE3_INTEGER);
+                $leagueStandings = [];
+                while ($row = $stmt->execute()->fetchArray(SQLITE3_ASSOC)) {
+                    $leagueStandings[] = $row;
+                }
+            }
         }
     }
-
-    // 2. Get player data
-    $playerId = $_SESSION['player_id'] ?? 1;
-    $stmt = $db->prepare("
-        SELECT p.*, u.Firstname, u.Surname, t.TeamName, t.TeamID, t.LeagueID 
-        FROM Player p
-        JOIN User u ON p.UserID = u.UserID
-        JOIN Team t ON p.TeamID = t.TeamID
-        WHERE p.PlayerID = :playerId
-    ");
-    $stmt->bindValue(':playerId', $playerId, SQLITE3_INTEGER);
-    $player = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
-    
-    if (!$player) throw new Exception("Player not found");
-
-    // 3. Get team roster
-    $teamPlayers = [];
-    $stmt = $db->prepare("
-        SELECT p.PlayerID, u.Firstname, u.Surname, p.Goals, p.Assists, 
-               p.YellowCards, p.RedCards, p.Appearances
-        FROM Player p
-        JOIN User u ON p.UserID = u.UserID
-        WHERE p.TeamID = :teamId
-        ORDER BY p.Goals DESC
-    ");
-    $stmt->bindValue(':teamId', $player['TeamID'], SQLITE3_INTEGER);
-    $result = $stmt->execute();
-    while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-        $row['PlayerName'] = $row['Firstname'] . ' ' . $row['Surname'];
-        $teamPlayers[] = $row;
-    }
-
-    // 4. Get matches using new schema
-    $matches = [];
-    $stmt = $db->prepare("
-        SELECT m.*,
-               CASE WHEN m.HomeTeamID = :teamId THEN m.HomeGoals ELSE m.AwayGoals END as TeamGoals,
-               CASE WHEN m.HomeTeamID = :teamId THEN m.AwayGoals ELSE m.HomeGoals END as OpponentGoals
-        FROM (
-            SELECT 'League' as MatchType, lm.*, 
-                   ht.TeamName as HomeTeam, at.TeamName as AwayTeam,
-                   f.Name as Venue
-            FROM League_Match lm
-            JOIN Team ht ON lm.HomeTeamID = ht.TeamID
-            JOIN Team at ON lm.AwayTeamID = at.TeamID
-            JOIN Field f ON lm.FieldID = f.FieldID
-            WHERE (lm.HomeTeamID = :teamId OR lm.AwayTeamID = :teamId)
-            
-            UNION
-            
-            SELECT 'Friendly' as MatchType, fm.*,
-                   t1.TeamName as HomeTeam, t2.TeamName as AwayTeam,
-                   f.Name as Venue
-            FROM Friendly_Match fm
-            JOIN Team t1 ON fm.TeamID = t1.TeamID
-            JOIN Team t2 ON fm.OpposingTeamID = t2.TeamID
-            JOIN Field f ON fm.FieldID = f.FieldID
-            WHERE (fm.TeamID = :teamId OR fm.OpposingTeamID = :teamId)
-        ) m
-        ORDER BY m.MatchDate DESC
-        LIMIT 10
-    ");
-    $stmt->bindValue(':teamId', $player['TeamID'], SQLITE3_INTEGER);
-    $result = $stmt->execute();
-    while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-        $matches[] = $row;
-    }
-
-    // Split matches
-    $now = date('Y-m-d H:i:s');
-    $upcoming = array_filter($matches, fn($m) => $m['MatchDate'] > $now);
-    $recent = array_filter($matches, fn($m) => $m['MatchDate'] <= $now);
-
-    // 5. Get league standings from new tables
-    $leagueStandings = [];
-    if ($player['LeagueID'] == 1) {
-        $stmt = $db->prepare("
-            SELECT t.TeamName, p.* 
-            FROM Premier_League_Standings p
-            JOIN Team t ON p.TeamID = t.TeamID
-            ORDER BY p.Points DESC, p.GoalDifference DESC
-        ");
-    } else {
-        $stmt = $db->prepare("
-            SELECT t.TeamName, p.* 
-            FROM La_Liga_Standings p
-            JOIN Team t ON p.TeamID = t.TeamID
-            ORDER BY p.Points DESC, p.GoalDifference DESC
-        ");
-    }
-    $result = $stmt->execute();
-    while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-        $leagueStandings[] = $row;
-    }
-
 } catch (Exception $e) {
-    die("Error loading player data: " . $e->getMessage());
+    $errorMessage = "System temporarily unavailable. Please try again later.";
+    error_log("PlayerOverview Error: " . $e->getMessage());
+    die("
+    <!DOCTYPE html>
+    <html>
+    <head><title>Error</title></head>
+    <body><div class='error-container'><h2>Application Error</h2><p>{$errorMessage}</p></div></body>
+    </html>");
 } finally {
-    if (isset($dbInstance)) $dbInstance->closeConnection();
+    if ($dbInstance) $dbInstance->closeConnection();
 }
 ?>
 <!DOCTYPE html>
@@ -169,8 +160,15 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Overview</title>
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../styles.css">
     <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         :root {
             --primary-color: #03588C;
             --secondary-color: #022340;
@@ -178,20 +176,151 @@ try {
             --text-light: #F2F2F2;
             --text-muted: #b3e5fc;
             --card-bg: linear-gradient(135deg, #1b3d55, #022340);
+            --error-border: #e74c3c;
+            --error-bg: #fdf7f7;
         }
         
-        .highlight {
-            background-color: var(--primary-color);
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Header */
+        .header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: flex-end;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .profile-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .profile-box i {
+            font-size: 1.2rem;
+        }
+        
+        .name {
             font-weight: bold;
         }
         
+        .role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 180px;
+            z-index: 1001;
+        }
+        
+        .dropdown a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        
+        .dropdown a:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .profile-box:hover .dropdown {
+            display: block;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--secondary-color);
+            color: white;
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 60px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .goikon-logo {
+            width: 80%;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        .sidebar-separator {
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin: 10px 20px;
+        }
+        
+        .sidebar-button, .sidebar-toolbox-button {
+            padding: 12px 20px;
+            transition: background-color 0.2s;
+        }
+        
+        .sidebar-button:hover, .sidebar-toolbox-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-button a, .sidebar-toolbox-button a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-button i, .sidebar-toolbox-button i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-toolbox-container {
+            margin-top: auto;
+            padding-bottom: 20px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            margin-top: 60px;
+            padding: 20px;
+            min-height: calc(100vh - 60px);
+        }
+        
+        .main-content h1 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        /* Dashboard Grid */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             grid-auto-rows: minmax(150px, auto);
             gap: 20px;
-            padding: 20px;
-            height: calc(100vh - 120px);
         }
         
         .card {
@@ -203,6 +332,7 @@ try {
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             border: 2px solid var(--primary-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: var(--text-light);
         }
         
         .card:hover {
@@ -218,7 +348,7 @@ try {
             border-bottom: 2px solid var(--primary-color);
         }
         
-        /* Player Stats Grid */
+        /* Player Stats */
         #player-stats {
             grid-column: span 3;
             grid-row: span 1;
@@ -274,12 +404,13 @@ try {
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /* Other Cards */
+        /* Standings */
         #standings { 
             grid-column: span 3;
             grid-row: span 2;
         }
         
+        /* Matches */
         #recent-matches {
             grid-column: span 3;
             grid-row: span 1;
@@ -293,6 +424,16 @@ try {
         .scrollable-container {
             overflow-y: auto;
             max-height: calc(100% - 40px);
+            padding-right: 5px;
+        }
+        
+        .scrollable-container::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 5px;
         }
         
         /* Match Items */
@@ -305,9 +446,96 @@ try {
             font-weight: bold;
         }
         
-        .match-date {
+        .match-date, .match-venue {
             font-size: 0.9rem;
             color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .match-score {
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .match-score.win {
+            color: #4CAF50;
+        }
+        
+        .match-score.lose {
+            color: #F44336;
+        }
+        
+        .match-score.draw {
+            color: #FFC107;
+        }
+        
+        /* Standings Table */
+        #standings table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        #standings th {
+            background-color: var(--primary-color);
+            padding: 10px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+        
+        #standings td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Highlight Row */
+        .highlight {
+            background-color: rgba(79, 195, 247, 0.2);
+            font-weight: bold;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 250px);
+            margin-left: 250px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .footer a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        
+        .footer a:hover {
+            opacity: 0.8;
+        }
+        
+        /* Error Page */
+        .error-container {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            border: 1px solid var(--error-border);
+            border-radius: 5px;
+            background-color: var(--error-bg);
+        }
+        
+        .error-title {
+            color: var(--error-border);
+            margin-top: 0;
         }
         
         /* Responsive */
@@ -322,6 +550,24 @@ try {
         }
         
         @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding-top: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                margin-top: 0;
+            }
+            
+            .footer {
+                width: 100%;
+                margin-left: 0;
+                position: relative;
+            }
+            
             .dashboard {
                 grid-template-columns: 1fr;
             }
@@ -390,27 +636,27 @@ try {
                 <div class="stats-grid">
                     <div class="stat-item">
                         <div class="stat-label">Appearances</div>
-                        <div class="stat-value"><?= $player['Appearances'] ?></div>
+                        <div class="stat-value"><?= $player['Appearances'] ?? 0 ?></div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Goals</div>
-                        <div class="stat-value"><?= $player['Goals'] ?></div>
+                        <div class="stat-value"><?= $player['Goals'] ?? 0 ?></div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Assists</div>
-                        <div class="stat-value"><?= $player['Assists'] ?></div>
+                        <div class="stat-value"><?= $player['Assists'] ?? 0 ?></div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Yellow Cards</div>
-                        <div class="stat-value"><?= $player['YellowCards'] ?></div>
+                        <div class="stat-value"><?= $player['YellowCards'] ?? 0 ?></div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Red Cards</div>
-                        <div class="stat-value"><?= $player['RedCards'] ?></div>
+                        <div class="stat-value"><?= $player['RedCards'] ?? 0 ?></div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Team</div>
-                        <div class="stat-value"><?= htmlspecialchars($player['TeamName']) ?></div>
+                        <div class="stat-value"><?= htmlspecialchars($player['TeamName'] ?? 'None') ?></div>
                     </div>
                 </div>
             </div>
@@ -429,7 +675,7 @@ try {
                         </thead>
                         <tbody>
                             <?php foreach (array_slice($teamPlayers, 0, 6) as $tp): ?>
-                            <tr <?= $tp['PlayerID'] == $playerId ? 'class="highlight"' : '' ?>>
+                            <tr <?= ($tp['PlayerID'] == ($player['PlayerID'] ?? null)) ? 'class="highlight"' : '' ?>>
                                 <td><?= htmlspecialchars($tp['PlayerName']) ?></td>
                                 <td><?= $tp['Goals'] ?></td>
                                 <td><?= $tp['Assists'] ?></td>
@@ -444,24 +690,19 @@ try {
             <div class="card" id="recent-matches">
                 <h2>RECENT MATCHES</h2>
                 <div class="scrollable-container">
-                    <?php foreach (array_slice($recent, 0, 5) as $match): 
-                        $isHome = $match['HomeTeam'] == $player['TeamName'];
+                    <?php foreach ($recent as $match): 
+                        $isHome = $match['HomeTeam'] == ($player['TeamName'] ?? '');
                         $opponent = $isHome ? $match['AwayTeam'] : $match['HomeTeam'];
                         $resultClass = '';
-                        if ($match['TeamGoals'] > $match['OpponentGoals']) {
-                            $resultClass = 'win';
-                        } elseif ($match['TeamGoals'] == $match['OpponentGoals']) {
-                            $resultClass = 'draw';
-                        } else {
-                            $resultClass = 'lose';
-                        }
+                        if ($isHome && ($match['HomeGoals'] > $match['AwayGoals'])) $resultClass = 'win';
+                        elseif (!$isHome && ($match['AwayGoals'] > $match['HomeGoals'])) $resultClass = 'win';
+                        elseif ($match['HomeGoals'] == $match['AwayGoals']) $resultClass = 'draw';
+                        else $resultClass = 'lose';
                     ?>
                     <div class="match-item">
                         <div class="match-opponent">vs <?= htmlspecialchars($opponent) ?></div>
                         <div class="match-score <?= $resultClass ?>">
-                            <?= $isHome ? $match['TeamGoals'] : $match['OpponentGoals'] ?>
-                            - 
-                            <?= $isHome ? $match['OpponentGoals'] : $match['TeamGoals'] ?>
+                            <?= $isHome ? $match['HomeGoals'] : $match['AwayGoals'] ?> - <?= $isHome ? $match['AwayGoals'] : $match['HomeGoals'] ?>
                         </div>
                         <div class="match-date">
                             <?= date('M j, Y', strtotime($match['MatchDate'])) ?>
@@ -487,7 +728,7 @@ try {
                         </thead>
                         <tbody>
                             <?php foreach ($leagueStandings as $index => $team): ?>
-                            <tr <?= $team['TeamName'] == $player['TeamName'] ? 'class="highlight"' : '' ?>>
+                            <tr <?= $team['TeamName'] == ($player['TeamName'] ?? '') ? 'class="highlight"' : '' ?>>
                                 <td><?= $index + 1 ?></td>
                                 <td><?= htmlspecialchars($team['TeamName']) ?></td>
                                 <td><?= $team['GamesPlayed'] ?></td>
@@ -504,18 +745,15 @@ try {
             <div class="card" id="fixtures">
                 <h2>UPCOMING FIXTURES</h2>
                 <div class="scrollable-container">
-                    <?php foreach (array_slice($upcoming, 0, 5) as $match): ?>
+                    <?php foreach ($upcoming as $match): ?>
                     <div class="match-item">
                         <div class="match-opponent"><?= htmlspecialchars($match['HomeTeam'] . ' vs ' . $match['AwayTeam']) ?></div>
                         <div class="match-date">
-                            <i class="far fa-calendar"></i> 
-                            <?= date('M j, Y', strtotime($match['MatchDate'])) ?>
-                            <i class="far fa-clock"></i>
-                            <?= date('H:i', strtotime($match['MatchDate'])) ?>
+                            <i class="far fa-calendar"></i> <?= date('M j, Y', strtotime($match['MatchDate'])) ?>
+                            <i class="far fa-clock"></i> <?= date('H:i', strtotime($match['MatchDate'])) ?>
                         </div>
                         <div class="match-venue">
-                            <i class="fas fa-map-marker-alt"></i> 
-                            <?= htmlspecialchars($match['Venue']) ?>
+                            <i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($match['Venue']) ?>
                         </div>
                     </div>
                     <?php endforeach; ?>

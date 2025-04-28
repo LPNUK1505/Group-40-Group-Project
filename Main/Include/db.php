@@ -1,40 +1,58 @@
 <?php
 class Database {
-    private $db;
+    private $db = null;
     private $dbPath;
 
-    public function construct($dbFile = 'goikon_with_PL_standings.db') {
-        // Absolute path to the database file
-        $this->dbPath = DIR__ . '/' . $dbFile;
-        // echo "Connecting to database at: $this->dbPath<br>"; // Debugging line
+    public function __construct() {
+        $this->dbPath = __DIR__ . '/goikon_with_PL_standings.db';
+        
+        try {
+            // Verify database file exists
+            if (!file_exists($this->dbPath)) {
+                throw new Exception("Database file not found at: " . $this->dbPath);
+            }
 
-        // Try to connect to the database
-        $this->db = new SQLite3($this->dbPath);
+            // Open database connection
+            $this->db = new SQLite3($this->dbPath);
+            $this->db->enableExceptions(true);
 
-        if (!$this->db) {
-            throw new Exception("Connection failed: " . $this->db->lastErrorMsg());
+            // Verify connection is established
+            if (!$this->db) {
+                throw new Exception("Failed to connect to database");
+            }
+
+            // Verify essential tables exist
+            $requiredTables = ['User', 'Player', 'Team'];
+            foreach ($requiredTables as $table) {
+                if (!$this->db->querySingle("SELECT name FROM sqlite_master WHERE type='table' AND name='$table'")) {
+                    throw new Exception("Required table '$table' not found in database");
+                }
+            }
+
+        } catch (Exception $e) {
+            // Log the error and ensure $this->db remains null
+            error_log("Database Error: " . $e->getMessage());
+            $this->db = null;
+            throw $e; // Re-throw for handling in calling code
         }
     }
 
     public function getConnection(): SQLite3 {
+        if ($this->db === null) {
+            throw new Exception("Database connection not established");
+        }
         return $this->db;
     }
 
     public function closeConnection(): void {
-        $this->db->close();
+        if ($this->db !== null) {
+            $this->db->close();
+            $this->db = null;
+        }
+    }
+
+    public function __destruct() {
+        $this->closeConnection();
     }
 }
-
-// Example of using the class:
-try {
-    // Create the database instance and get the connection
-    $dbInstance = new Database();  // You can pass a different DB file name if needed
-    $conn = $dbInstance->getConnection(); // Get the active connection
-} catch (Exception $e) {
-    // Handle the error (you can log the error instead of showing it in production)
-    die("Error: " . $e->getMessage());
-}
-
-// Close the connection when done
-$dbInstance->closeConnection();
 ?>
