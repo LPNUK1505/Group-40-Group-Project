@@ -3,10 +3,10 @@ class Database {
     private $db;
     private $dbPath;
 
-    public function __construct($dbFile = 'Goikon.db') {
+    public function construct($dbFile = 'goikon_with_PL_standings.db') {
         // Absolute path to the database file
-        $this->dbPath = __DIR__ . '/' . $dbFile;
-        echo "Connecting to database at: $this->dbPath<br>"; // Debugging line
+        $this->dbPath = DIR__ . '/' . $dbFile;
+        // echo "Connecting to database at: $this->dbPath<br>"; // Debugging line
 
         // Try to connect to the database
         $this->db = new SQLite3($this->dbPath);
@@ -16,11 +16,11 @@ class Database {
         }
     }
 
-    public function getConnection() {
+    public function getConnection(): SQLite3 {
         return $this->db;
     }
 
-    public function closeConnection() {
+    public function closeConnection(): void {
         $this->db->close();
     }
 }
