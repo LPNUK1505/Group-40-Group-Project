@@ -6,7 +6,7 @@ class Database {
     public function __construct($dbFile = 'Goikon.db') {
         // Absolute path to the database file
         $this->dbPath = __DIR__ . '/' . $dbFile;
-        echo "Connecting to database at: $this->dbPath<br>"; // Debugging line
+        // echo "Connecting to database at: $this->dbPath<br>"; // Debugging line
 
         // Try to connect to the database
         $this->db = new SQLite3($this->dbPath);
