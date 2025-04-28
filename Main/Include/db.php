@@ -3,7 +3,7 @@ class Database {
     private $db;
     private $dbPath;
 
-    public function __construct($dbFile = 'goikon_with_PL_standings.db') {
+    public function __construct($dbFile = 'GoikonDatabase.db') {
         // Absolute path to the database file
         $this->dbPath = __DIR__ . '/' . $dbFile;
         // echo "Connecting to database at: $this->dbPath<br>"; // Debugging line

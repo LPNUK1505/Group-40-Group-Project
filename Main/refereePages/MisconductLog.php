@@ -69,27 +69,108 @@
     </div>
 
 
+    </script>
+<!-- JAVA script to change colour of sidebar button referring to active page-->
+<!-- REQUIRES a class to be added to the active button-CHECK SettingsPersonal.html for an example-->
+<script src="../sidebar.js">
+     window.onload = preventPageRefresh;
+</script>
+<style>
+    /* Cards */
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 20px;
+    }
+
+    .card {
+        background-color: #062c50;
+        color: white;
+        border: 1px solid #114d8a;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 86, 179, 0.3);
+    }
+
+    .card h2 {
+        text-align: center;
+        color: #66ccff;
+        margin-bottom: 20px;
+    }
+
+    .result {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        background: #114d8a;
+        padding: 8px 10px;
+        border-radius: 8px;
+    }
+
+    .result span {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .result .winner {
+        color: #66ff66;
+    }
+    </style>
+
    <!-- Creates Main Content area -->
    <div class="main-content">
        <h1><b>Misconduct Log</b></h1>
-       <!-- insert a couple bits of data from the database about the teams -->
-       <table>
-            <tr>
-                <th>Home Team</th>
-                <th>Away Team</th>
-                <th>Kickoff Date</th>
-                <th>Kickoff Time</th>
-                <th>Card Type</th>
-            </tr>
-            <tr>
-                <td>Team 1</td>
-                <td>Team 2</td>
-                <td>18/05/2025</td>
-                <td>20:00</td>
-            </tr>
-        </table>
 
+       <?php
+        require_once __DIR__ . '/../Include/db.php';
 
-    
+        // connect to db
+        try {
+            $dbInstance = new Database();
+            $conn = $dbInstance->getConnection();
+        } catch (Exception $e) {
+            die("Error: " . $e->getMessage());
+        }
+        ?>
+        <!-- Recent Officiated Matches -->
+        <div class="card">
+            <h2>Recent Officiated Matches</h2>
+            <?php
+            $officiatedQuery = "
+                SELECT lm.LeagueMatchID, hm.TeamName AS HomeTeam, am.TeamName AS AwayTeam, 
+                    lm.MatchDate, lm.HomeGoals, lm.AwayGoals
+                FROM Referee_Booking rb
+                JOIN League_Match lm ON rb.LeagueMatchID = lm.LeagueMatchID
+                JOIN Team hm ON lm.HomeTeamID = hm.TeamID
+                JOIN Team am ON lm.AwayTeamID = am.TeamID
+                WHERE rb.RefereeID = 3
+                AND lm.Status = 'Completed'
+                ORDER BY lm.MatchDate DESC
+                LIMIT 5
+            ";
+            $officiatedResults = $conn->query($officiatedQuery);
+
+            while ($row = $officiatedResults->fetchArray(SQLITE3_ASSOC)) {
+                $homeTeam = htmlspecialchars($row['HomeTeam']);
+                $awayTeam = htmlspecialchars($row['AwayTeam']);
+                $homeGoals = intval($row['HomeGoals']);
+                $awayGoals = intval($row['AwayGoals']);
+                $leagueMatchID = intval($row['LeagueMatchID']);
+                $winnerHome = $homeGoals > $awayGoals ? 'winner' : '';
+                $winnerAway = $awayGoals > $homeGoals ? 'winner' : '';
+
+                echo "<div class='result'>
+                        <span class='$winnerHome'>{$homeTeam} {$homeGoals}</span>
+                        <span>-</span>
+                        <span class='$winnerAway'>{$awayGoals} {$awayTeam}</span>
+                    </div>";
+            }
+            ?>
+        </div>
+        <?php
+        $dbInstance->closeConnection();
+        ?>
    </div>
 </html>
