@@ -1,4 +1,6 @@
 <?php
+// Add memory limit at the very top
+ini_set('memory_limit', '256M');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -14,54 +16,50 @@ try {
     include_once __DIR__ . '/../Include/db.php';
     $dbInstance = new Database();
     $db = $dbInstance->getConnection();
+    
+    // Add SQLite performance optimizations
+    $db->exec("PRAGMA journal_mode = WAL");
+    $db->exec("PRAGMA synchronous = NORMAL");
+    
     session_start();
 
     if (isset($_SESSION['user_id'])) {
         $userId = $_SESSION['user_id'];
         
-        // 1. Get user profile
+        // 1. Get user profile (optimized)
         $stmt = $db->prepare("
             SELECT u.UserID, u.Firstname, u.Surname, u.AccountType, 
-                   t.TeamID, t.TeamName, t.LeagueID, tm.ManagerID
+                   t.TeamID, t.TeamName, t.LeagueID
             FROM User u
             LEFT JOIN Player p ON u.UserID = p.UserID
             LEFT JOIN Team t ON p.TeamID = t.TeamID
-            LEFT JOIN TeamManager tm ON u.UserID = tm.UserID
             WHERE u.UserID = :user_id
+            LIMIT 1
         ");
         $stmt->bindValue(':user_id', $userId, SQLITE3_INTEGER);
         $user = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
         
         if ($user) {
             $userDisplay['name'] = $user['Firstname'] . ' ' . $user['Surname'];
-            switch (strtolower($user['AccountType'])) {
-                case 'player':
-                    $userDisplay['role'] = "Player" . ($user['TeamName'] ? " - " . $user['TeamName'] : "");
-                    break;
-                case 'team manager':
-                    if ($user['ManagerID']) {
-                        $stmt = $db->prepare("SELECT TeamName FROM Team WHERE ManagerID = :manager_id");
-                        $stmt->bindValue(':manager_id', $user['ManagerID'], SQLITE3_INTEGER);
-                        $team = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
-                        $userDisplay['role'] = "Team Manager" . ($team['TeamName'] ? " - " . $team['TeamName'] : "");
-                    }
-                    break;
-                default:
-                    $userDisplay['role'] = ucfirst($user['AccountType']);
+            $userDisplay['role'] = ucfirst($user['AccountType']);
+            
+            if (strtolower($user['AccountType']) === 'player' && !empty($user['TeamName'])) {
+                $userDisplay['role'] .= " - " . $user['TeamName'];
             }
 
-            // 2. Get player stats
+            // 2. Get player stats (simplified)
             if (strtolower($user['AccountType']) === 'player') {
                 $stmt = $db->prepare("
-                    SELECT p.*, t.TeamName 
+                    SELECT Appearances, Goals, Assists, YellowCards, RedCards, TeamName 
                     FROM Player p
                     JOIN Team t ON p.TeamID = t.TeamID 
                     WHERE p.UserID = :user_id
+                    LIMIT 1
                 ");
                 $stmt->bindValue(':user_id', $userId, SQLITE3_INTEGER);
                 $player = $stmt->execute()->fetchArray(SQLITE3_ASSOC) ?: [];
 
-                // 3. Get team roster
+                // 3. Get team roster (limited)
                 $stmt = $db->prepare("
                     SELECT p.PlayerID, u.Firstname || ' ' || u.Surname AS PlayerName, 
                            p.Goals, p.Assists
@@ -69,72 +67,69 @@ try {
                     JOIN User u ON p.UserID = u.UserID
                     WHERE p.TeamID = :team_id
                     ORDER BY p.Goals DESC
+                    LIMIT 15
                 ");
                 $stmt->bindValue(':team_id', $user['TeamID'], SQLITE3_INTEGER);
-                $teamPlayers = [];
-                while ($row = $stmt->execute()->fetchArray(SQLITE3_ASSOC)) {
+                $result = $stmt->execute();
+                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                     $teamPlayers[] = $row;
                 }
 
-                // 4. Get recent matches (last 5 completed)
+                // 4. Get recent matches (limited)
                 $stmt = $db->prepare("
                     SELECT 
                         t1.TeamName AS HomeTeam, 
                         t2.TeamName AS AwayTeam,
                         lm.MatchDate,
                         lm.HomeGoals,
-                        lm.AwayGoals,
-                        f.Name AS Venue
+                        lm.AwayGoals
                     FROM League_Match lm
                     JOIN Team t1 ON lm.HomeTeamID = t1.TeamID
                     JOIN Team t2 ON lm.AwayTeamID = t2.TeamID
-                    JOIN Field f ON lm.FieldID = f.FieldID
                     WHERE (t1.TeamID = :team_id OR t2.TeamID = :team_id)
                     AND lm.Status = 'Completed'
                     ORDER BY lm.MatchDate DESC
                     LIMIT 5
                 ");
                 $stmt->bindValue(':team_id', $user['TeamID'], SQLITE3_INTEGER);
-                $recent = [];
-                while ($row = $stmt->execute()->fetchArray(SQLITE3_ASSOC)) {
+                $result = $stmt->execute();
+                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                     $recent[] = $row;
                 }
 
-                // 5. Get upcoming matches (next 5 scheduled)
+                // 5. Get upcoming matches (limited)
                 $stmt = $db->prepare("
                     SELECT 
                         t1.TeamName AS HomeTeam, 
                         t2.TeamName AS AwayTeam,
-                        lm.MatchDate,
-                        f.Name AS Venue
+                        lm.MatchDate
                     FROM League_Match lm
                     JOIN Team t1 ON lm.HomeTeamID = t1.TeamID
                     JOIN Team t2 ON lm.AwayTeamID = t2.TeamID
-                    JOIN Field f ON lm.FieldID = f.FieldID
                     WHERE (t1.TeamID = :team_id OR t2.TeamID = :team_id)
                     AND lm.Status = 'Scheduled'
-                    AND lm.MatchDate >= date('now')
                     ORDER BY lm.MatchDate ASC
                     LIMIT 5
                 ");
                 $stmt->bindValue(':team_id', $user['TeamID'], SQLITE3_INTEGER);
-                $upcoming = [];
-                while ($row = $stmt->execute()->fetchArray(SQLITE3_ASSOC)) {
+                $result = $stmt->execute();
+                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                     $upcoming[] = $row;
                 }
 
-                // 6. Get league standings
+                // 6. Get league standings (optimized)
                 $leagueTable = ($user['LeagueID'] == 1) ? 'Premier_League_Standings' : 'La_Liga_Standings';
                 $stmt = $db->prepare("
-                    SELECT t.TeamName, s.Points, s.GoalDifference, s.GamesPlayed
+                    SELECT TeamName, Points, GoalDifference, GamesPlayed
                     FROM {$leagueTable} s
                     JOIN Team t ON s.TeamID = t.TeamID
                     WHERE t.LeagueID = :league_id
-                    ORDER BY s.Points DESC, s.GoalDifference DESC
+                    ORDER BY s.Points DESC
+                    LIMIT 10
                 ");
                 $stmt->bindValue(':league_id', $user['LeagueID'], SQLITE3_INTEGER);
-                $leagueStandings = [];
-                while ($row = $stmt->execute()->fetchArray(SQLITE3_ASSOC)) {
+                $result = $stmt->execute();
+                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                     $leagueStandings[] = $row;
                 }
             }
