@@ -463,6 +463,7 @@
                 SELECT Team.TeamName, Premier_League_Standings.GamesPlayed, Premier_League_Standings.GoalDifference, Premier_League_Standings.Points
                 FROM Premier_League_Standings
                 JOIN Team ON Premier_League_Standings.TeamID = Team.TeamID
+                ORDER BY Premier_League_Standings.Points DESC, Premier_League_Standings.GoalDifference DESC
                 ";
                 $result = $conn->query($query);
                 $position = 1;
@@ -510,13 +511,12 @@
                 } catch (Exception $e) {
                     die("Error: " . $e->getMessage());
                 }
-                
-                // $db = new SQLite3("Include/goikon_with_PL_standings.db");
-                
+                                
                 $query = "
                 SELECT Team.TeamName, La_Liga_Standings.GamesPlayed, La_Liga_Standings.GoalDifference, La_Liga_Standings.Points
                 FROM La_Liga_Standings
                 JOIN Team ON La_Liga_Standings.TeamID = Team.TeamID
+                ORDER BY La_Liga_Standings.Points DESC, La_Liga_Standings.GoalDifference DESC
                 ";
                 $result = $conn->query($query);
                 $position = 1;
@@ -553,8 +553,6 @@
                 </div>
                 <?php
                 $dbInstance->closeConnection();
-
-                // $db->close();
                 ?>
 
 
