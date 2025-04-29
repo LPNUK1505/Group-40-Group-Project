@@ -140,7 +140,7 @@ if (isset($_GET['id'])) {
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
             <div class="sidebar-toolbox-button">
-                <a href="../Homepages/SettingsPersonal.html">
+                <a href="../Homepages/SettingsPersonal.php">
                     <i class="fa-solid fa-gear"></i>Settings
                 </a>
             </div>
@@ -157,8 +157,8 @@ if (isset($_GET['id'])) {
     <div class="footer">
 
         <!-- Creates buttons in the footer -->
-        <a href="../Homepages/AboutUs.html">About Us</a>
-        <a href="../Homepages/ContactUs.html">Contact Us</a>
+        <a href="../Homepages/AboutUs.php">About Us</a>
+        <a href="../Homepages/ContactUs.php">Contact Us</a>
     </div>
 
 

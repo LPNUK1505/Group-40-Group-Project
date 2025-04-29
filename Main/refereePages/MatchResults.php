@@ -64,8 +64,8 @@
     <!-- Creates the Footer at the bottom -->
     <div class="footer">
         <!-- Creates buttons in the footer -->
-        <a href="../Homepages/AboutUs.html">About Us</a>
-        <a href="../Homepages/ContactUs.html">Contact Us</a>
+        <a href="../Homepages/AboutUs.php">About Us</a>
+        <a href="../Homepages/ContactUs.php">Contact Us</a>
     </div>
 
     <style>
