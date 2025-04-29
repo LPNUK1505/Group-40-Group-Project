@@ -57,16 +57,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($matchType === 'league') {
             $stmt = $conn->prepare("INSERT INTO League_Match (
-                LeagueID, HomeTeamID, AwayTeamID, MatchDate, Venue, Status
+                LeagueID, HomeTeamID, AwayTeamID, MatchDate, FieldID, Status
             ) VALUES (
-                :league_id, :home_team, :away_team, :match_date, :venue, :status
+                :league_id, :home_team, :away_team, :match_date, :field_id, :status
             )");
             
             $stmt->bindParam(':league_id', $_POST['league_id']);
             $stmt->bindParam(':home_team', $_POST['home_team']);
             $stmt->bindParam(':away_team', $_POST['away_team']);
             $stmt->bindParam(':match_date', $_POST['match_date']);
-            $stmt->bindParam(':venue', $_POST['venue']);
+            $stmt->bindParam(':field_id', $_POST['field_id']);
             $stmt->bindParam(':status', $status);
             
             $stmt->execute();
@@ -407,14 +407,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endforeach; ?>
                     </select>
                     
-                    <label for="venue">Venue:</label>
-                    <input type="text" id="venue" name="venue" required>
+                    <label for="field_id">Field:</label>
+                    <select id="field_id" name="field_id" required>
+                        <?php foreach ($fields as $field): ?>
+                            <option value="<?php echo htmlspecialchars($field['FieldID']); ?>">
+                                <?php echo htmlspecialchars($field['Name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 
                 <!-- Friendly Match Form -->
                 <div id="friendly-match-form" class="match-form-section">
                     <label for="field_id">Field:</label>
-                    <select id="field_id" name="field_id">
+                    <select id="field_id" name="field_id" required>
                         <?php foreach ($fields as $field): ?>
                             <option value="<?php echo htmlspecialchars($field['FieldID']); ?>">
                                 <?php echo htmlspecialchars($field['Name']); ?>
@@ -423,7 +429,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </select>
                     
                     <label for="team_id">Team:</label>
-                    <select id="team_id" name="team_id">
+                    <select id="team_id" name="team_id" required>
                         <?php foreach ($teams as $team): ?>
                             <option value="<?php echo htmlspecialchars($team['TeamID']); ?>">
                                 <?php echo htmlspecialchars($team['TeamName']); ?>
@@ -432,7 +438,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </select>
                     
                     <label for="opposing_team">Opposing Team:</label>
-                    <select id="opposing_team" name="opposing_team">
+                    <select id="opposing_team" name="opposing_team" required>
                         <?php foreach ($teams as $team): ?>
                             <option value="<?php echo htmlspecialchars($team['TeamID']); ?>">
                                 <?php echo htmlspecialchars($team['TeamName']); ?>

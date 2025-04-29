@@ -6,7 +6,7 @@ $conn = $dbInstance->getConnection();
 
 $matchId = $matchType = '';
 $leagueId = $homeTeamId = $awayTeamId = $fieldId = $teamId = $opposingTeamId = '';
-$matchDate = $venue = $status = '';
+$matchDate = $status = '';
 $leagues = [];
 $teams = [];
 $fields = [];
@@ -64,7 +64,7 @@ if ($matchType === 'league') {
                 lm.HomeTeamID,
                 lm.AwayTeamID,
                 lm.MatchDate,
-                lm.Venue,
+                lm.FieldID,
                 lm.Status,
                 rb.RefereeID
               FROM League_Match lm
@@ -100,7 +100,7 @@ if ($matchType === 'league') {
     $homeTeamId = $row['HomeTeamID'];
     $awayTeamId = $row['AwayTeamID'];
     $matchDate = $row['MatchDate'];
-    $venue = $row['Venue'];
+    $fieldId = $row['FieldID'];
     $status = $row['Status'];
     $refereeId = $row['RefereeID'];
 } else {
@@ -110,7 +110,6 @@ if ($matchType === 'league') {
     $matchDate = $row['MatchDate'];
     $status = $row['Status'];
     $refereeId = $row['RefereeID'];
-    $venue = ''; // Friendly matches use field name as venue
 }
 
 // Handle form submission
@@ -124,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $leagueId = trim($_POST['league_id']);
         $homeTeamId = trim($_POST['home_team']);
         $awayTeamId = trim($_POST['away_team']);
-        $venue = trim($_POST['venue']);
+        $fieldId = trim($_POST['field_id']);
     } else {
         $fieldId = trim($_POST['field_id']);
         $teamId = trim($_POST['team_id']);
@@ -147,8 +146,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 LeagueID = :leagueId,
                                 HomeTeamID = :homeTeamId,
                                 AwayTeamID = :awayTeamId,
+                                FieldID = :fieldId,
                                 MatchDate = :matchDate,
-                                Venue = :venue,
                                 Status = :status
                                 WHERE LeagueMatchID = :matchId";
                 
@@ -156,8 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindValue(':leagueId', $leagueId, SQLITE3_INTEGER);
                 $stmt->bindValue(':homeTeamId', $homeTeamId, SQLITE3_INTEGER);
                 $stmt->bindValue(':awayTeamId', $awayTeamId, SQLITE3_INTEGER);
+                $stmt->bindValue(':fieldId', $fieldId, SQLITE3_INTEGER);
                 $stmt->bindValue(':matchDate', $matchDate, SQLITE3_TEXT);
-                $stmt->bindValue(':venue', $venue, SQLITE3_TEXT);
                 $stmt->bindValue(':status', $status, SQLITE3_TEXT);
                 $stmt->bindValue(':matchId', $matchId, SQLITE3_INTEGER);
             } else {
@@ -452,8 +451,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endforeach; ?>
                     </select>
                     
-                    <label for="venue">Venue:</label>
-                    <input type="text" id="venue" name="venue" value="<?php echo htmlspecialchars($venue); ?>" required>
+                    <label for="field_id">Field:</label>
+                    <select id="field_id" name="field_id" required>
+                        <?php foreach ($fields as $field): ?>
+                            <option value="<?php echo htmlspecialchars($field['FieldID']); ?>"
+                                <?php echo $field['FieldID'] == $fieldId ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($field['Name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 <?php else: ?>
                     <label for="field_id">Field:</label>
                     <select id="field_id" name="field_id" required>

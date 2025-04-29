@@ -64,20 +64,21 @@ $result = $stmt->execute();
     <link rel="stylesheet" href="../styles.css">
     <style>
         .user-content {
-            position: relative;
-            margin-left: 250px;
-            padding: 20px;
-            min-height: calc(100vh - 160px);
-            background-color: #022340;
-            color: #F2F2F2;
-            font-family: Verdana, Tahoma, sans-serif;
-            overflow-x: auto;
-        }
-
+             position: relative;
+             margin-left: 250px;
+             padding: 20px;
+             min-height: calc(100vh - 160px);
+             background-color: #022340;
+             color: #F2F2F2;
+             font-family: Verdana, Tahoma, sans-serif;
+             overflow-x: auto;
+             padding-top: 40px; 
+            }
         .pitches-container {
             margin: 20px 0;
             overflow-x: auto;
-        }
+            margin-top: 30px; 
+}
 
         .pitches-table {
             width: 100%;
@@ -92,10 +93,14 @@ $result = $stmt->execute();
         }
 
         .pitches-table th {
-            background-color: #03588C;
-            color: white;
-            font-weight: 600;
-        }
+             background-color: #03588C;
+             color: white;
+             font-weight: 600;
+             position: sticky;
+              top: 0; 
+              z-index: 10; 
+}
+
 
         .pitches-table tr:hover {
             background-color: rgba(3, 88, 140, 0.2);

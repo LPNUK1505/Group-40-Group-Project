@@ -76,14 +76,17 @@ $query = "
             ht.TeamName AS HomeTeam,
             at.TeamName AS AwayTeam,
             lm.MatchDate,
-            lm.Venue,
+            f.Name AS Venue,
             lm.Status,
-            NULL AS FieldName,
-            NULL AS PricePerHour
+            f.Name AS FieldName,
+            f.PricePerHour,
+            lm.HomeGoals,
+            lm.AwayGoals
         FROM League_Match lm
         JOIN League l ON lm.LeagueID = l.LeagueID
         JOIN Team ht ON lm.HomeTeamID = ht.TeamID
         JOIN Team at ON lm.AwayTeamID = at.TeamID
+        JOIN Field f ON lm.FieldID = f.FieldID
         
         UNION ALL
         
@@ -97,7 +100,9 @@ $query = "
             f.Name AS Venue,
             fm.Status,
             f.Name AS FieldName,
-            f.PricePerHour
+            f.PricePerHour,
+            NULL AS HomeGoals,
+            NULL AS AwayGoals
         FROM Friendly_Match fm
         JOIN Team t1 ON fm.TeamID = t1.TeamID
         JOIN Team t2 ON fm.OpposingTeamID = t2.TeamID
@@ -291,6 +296,11 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
             padding: 20px;
             font-style: italic;
         }
+        
+        .result {
+            font-weight: bold;
+            color: #2ecc71;
+        }
     </style>
 </head>
 <body>
@@ -378,9 +388,9 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                     <th>Type</th>
                     <th>League</th>
                     <th>Home Team</th>
+                    <th>Result</th>
                     <th>Away Team</th>
                     <th>Date & Time</th>
-                    <th>Venue</th>
                     <th>Status</th>
                     <th>Field</th>
                     <th>Price</th>
@@ -390,14 +400,18 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                 $hasRows = false;
                 foreach ($allMatches as $row): 
                     $hasRows = true;
+                    $homeGoals = $row['HomeGoals'] ?? null;
+                    $awayGoals = $row['AwayGoals'] ?? null;
+                    $resultDisplay = ($homeGoals !== null && $awayGoals !== null) ? 
+                        "<span class='result'>$homeGoals - $awayGoals</span>" : "N/A";
                 ?>
                     <tr>
                         <td><?php echo htmlspecialchars($row['MatchType']); ?></td>
                         <td><?php echo htmlspecialchars($row['LeagueName'] ?? 'N/A'); ?></td>
                         <td><?php echo htmlspecialchars($row['HomeTeam']); ?></td>
+                        <td><?php echo $resultDisplay; ?></td>
                         <td><?php echo htmlspecialchars($row['AwayTeam']); ?></td>
                         <td><?php echo htmlspecialchars(date('Y-m-d H:i', strtotime($row['MatchDate']))); ?></td>
-                        <td><?php echo htmlspecialchars($row['Venue']); ?></td>
                         <td class="status-<?php echo strtolower($row['Status']); ?>">
                             <?php echo htmlspecialchars($row['Status']); ?>
                         </td>
@@ -419,7 +433,7 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                 
                 <?php if (!$hasRows): ?>
                     <tr>
-                        <td colspan="10" class="no-data">No matches found in the database</td>
+                        <td colspan="11" class="no-data">No matches found in the database</td>
                     </tr>
                 <?php endif; ?>
             </table>
