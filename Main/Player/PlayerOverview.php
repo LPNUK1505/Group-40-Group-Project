@@ -98,43 +98,31 @@ try {
                 }
 
     // upcoming matches 
-try {
-    if (empty($user['TeamID'])) {
-        $upcoming = []; // No team = no matches
-        error_log("Player not assigned to any team - UserID: $userId");
-    } else {
+    $upcoming = []; // Initialize empty array
+
+    if (!empty($user['TeamID'])) {
         $stmt = $db->prepare("
             SELECT 
                 t1.TeamName AS HomeTeam,
                 t2.TeamName AS AwayTeam,
-                strftime('%Y-%m-%d %H:%M', lm.MatchDate) AS MatchDate,
-                COALESCE(f.Name, 'TBD') AS Venue
+                lm.MatchDate,
+                f.Name AS Venue
             FROM League_Match lm
             JOIN Team t1 ON lm.HomeTeamID = t1.TeamID
             JOIN Team t2 ON lm.AwayTeamID = t2.TeamID
             LEFT JOIN Field f ON lm.FieldID = f.FieldID
             WHERE (t1.TeamID = :team_id OR t2.TeamID = :team_id)
-            AND UPPER(lm.Status) = 'SCHEDULED'
-            AND date(lm.MatchDate) >= date('now')
+            AND Status = 'Scheduled'
             ORDER BY lm.MatchDate ASC
             LIMIT 5
         ");
         $stmt->bindValue(':team_id', $user['TeamID'], SQLITE3_INTEGER);
-        $result = $stmt->execute();
         
-        $upcoming = [];
+        $result = $stmt->execute();
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
             $upcoming[] = $row;
         }
-        
-        if (empty($upcoming)) {
-            error_log("No upcoming matches found for TeamID: " . $user['TeamID']);
-        }
     }
-} catch (Exception $e) {
-    error_log("Upcoming matches query failed: " . $e->getMessage());
-    $upcoming = [];
-}
                 // league standings
                 $leagueTable = ($user['LeagueID'] == 1) ? 'Premier_League_Standings' : 'La_Liga_Standings';
                 $stmt = $db->prepare("
@@ -494,28 +482,34 @@ try {
                 </div>
                 
                 <!-- Upcoming Fixtures -->
-                <?php if (!empty($upcoming)): ?>
-    <div class="fixtures-section">
-        <h2>UPCOMING FIXTURES</h2>
-        <?php foreach ($upcoming as $match): ?>
-            <div class="match-item">
-                <div class="teams">
-                    <?= htmlspecialchars($match['HomeTeam']) ?> vs <?= htmlspecialchars($match['AwayTeam']) ?>
+                <div class="card" id="fixtures">
+    <h2>UPCOMING FIXTURES</h2>
+    <?php if (!empty($upcoming)): ?>
+        <div class="scrollable-container">
+            <?php foreach ($upcoming as $match): ?>
+                <div class="match-item">
+                    <div class="match-opponent">
+                        <?= htmlspecialchars($match['HomeTeam'] . ' vs ' . $match['AwayTeam']) ?>
+                    </div>
+                    <div class="match-date">
+                        <i class="far fa-calendar"></i> 
+                        <?= date('M j, Y', strtotime($match['MatchDate'])) ?>
+                        <i class="far fa-clock"></i>
+                        <?= date('H:i', strtotime($match['MatchDate'])) ?>
+                    </div>
+                    <?php if (!empty($match['Venue'])): ?>
+                        <div class="match-venue">
+                            <i class="fas fa-map-marker-alt"></i> 
+                            <?= htmlspecialchars($match['Venue']) ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
-                <div class="match-date">
-                    <?= date('M j, Y g:i A', strtotime($match['MatchDate'])) ?>
-                </div>
-                <div class="venue">
-                    <?= htmlspecialchars($match['Venue']) ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-<?php else: ?>
-    <div class="no-fixtures">
-        No upcoming fixtures scheduled
-    </div>
-<?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <p>No upcoming fixtures scheduled</p>
+    <?php endif; ?>
+</div>
             </div>
         </div>
     </div>
