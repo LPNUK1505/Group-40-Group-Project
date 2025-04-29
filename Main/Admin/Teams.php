@@ -1,8 +1,32 @@
 <?php
-require_once '../Include/db.php'; 
+session_start();
 
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Create Account and Login/Login.php");
+    exit();
+}
+
+require_once '../Include/db.php';
+
+// Get user info
+$user_id = $_SESSION['user_id'];
+$user_role = $_SESSION['user_role'] ?? 'Admin';
+
+// Database connection
 $dbInstance = new Database();
 $conn = $dbInstance->getConnection();
+
+// Get user details
+$userQuery = $conn->prepare("SELECT Firstname, Surname FROM User WHERE UserID = ?");
+$userQuery->bindValue(1, $user_id, SQLITE3_INTEGER);
+$userResult = $userQuery->execute();
+$userData = $userResult->fetchArray();
+
+$userDisplay = [
+    'name' => $userData ? htmlspecialchars($userData['Firstname'] . ' ' . $userData['Surname']) : 'Admin User',
+    'role' => htmlspecialchars($user_role)
+];
 
 // Handle delete action
 if (isset($_GET['delete_id'])) {
@@ -61,8 +85,8 @@ $stmt = $conn->prepare($query);
 $stmt->bindValue(':limit', $results_per_page, SQLITE3_INTEGER);
 $stmt->bindValue(':offset', $offset, SQLITE3_INTEGER);
 $result = $stmt->execute();
-
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -223,17 +247,17 @@ $result = $stmt->execute();
 <body>
     <!-- Header -->
     <div class="header">
-        <h2>Team list</h2>
+        <h1>Team List</h1>
         <div class="profile-box">
             <i class="fa fa-user"></i>
             <div>
-                <div class="name">Fazley</div>
-                <div class="role">Admin</div>
+                <div class="name"><?= htmlspecialchars($userDisplay['name']) ?></div>
+                <div class="role"><?= htmlspecialchars($userDisplay['role']) ?></div>
             </div>
             <i class="fa fa-chevron-down dropdown-icon"></i>
             <div class="dropdown">
                 <a href="#">Profile</a>
-                <a href="../Homepages/SettingsData.html">Manage Data</a>
+                <a href="../Homepages/SettingsData.php">Manage Data</a>
                 <a href="../Create Account and Login/Login.php">Sign Out</a>
             </div>
         </div>
@@ -273,7 +297,7 @@ $result = $stmt->execute();
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
             <div class="sidebar-toolbox-button">
-                <a href="../Homepages/SettingsPersonal.html">
+                <a href="../Homepages/SettingsPersonal.php">
                     <i class="fa-solid fa-gear"></i>Settings
                 </a>
             </div>
@@ -380,8 +404,8 @@ $result = $stmt->execute();
     </div>
 
     <div class="footer">
-        <a href="../Homepages/AboutUs.html">About Us</a>
-        <a href="../Homepages/ContactUs.html">Contact Us</a>
+        <a href="../Homepages/AboutUs.php">About Us</a>
+        <a href="../Homepages/ContactUs.php">Contact Us</a>
     </div>
 
     <script src="../sidebar.js"></script>

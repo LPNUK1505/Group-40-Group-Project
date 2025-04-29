@@ -1,9 +1,32 @@
 <?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Create Account and Login/Login.php");
+    exit();
+}
+
 require_once '../Include/db.php';
 
+// Get user info
+$user_id = $_SESSION['user_id'];
+$user_role = $_SESSION['user_role'] ?? 'Admin';
 
+// Database connection
 $dbInstance = new Database();
 $db = $dbInstance->getConnection();
+
+// Get user details
+$userQuery = $db->prepare("SELECT Firstname, Surname FROM User WHERE UserID = ?");
+$userQuery->bindValue(1, $user_id, SQLITE3_INTEGER);
+$userResult = $userQuery->execute();
+$userData = $userResult->fetchArray();
+
+$userDisplay = [
+    'name' => $userData ? htmlspecialchars($userData['Firstname'] . ' ' . $userData['Surname']) : 'Admin User',
+    'role' => htmlspecialchars($user_role)
+];
 
 // Pagination setup for matches
 $matchesPerPage = 5;
@@ -332,13 +355,13 @@ $recentMatches = $db->query("
         <div class="profile-box">
             <i class="fa fa-user"></i>
             <div>
-                <div class="name">Fazley</div>
-                <div class="role">Admin</div>
+                <div class="name"><?= $userDisplay['name'] ?></div>
+                <div class="role"><?= $userDisplay['role'] ?></div>
             </div>
             <i class="fa fa-chevron-down dropdown-icon"></i>
             <div class="dropdown">
                 <a href="#">Profile</a>
-                <a href="../Homepages/SettingsData.html">Manage Data</a>
+                <a href="../Homepages/SettingsData.php">Manage Data</a>
                 <a href="../Create Account and Login/Login.php">Sign Out</a>
             </div>
         </div>
@@ -379,7 +402,7 @@ $recentMatches = $db->query("
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
             <div class="sidebar-toolbox-button">
-                <a href="../Homepages/SettingsPersonal.html">
+                <a href="../Homepages/SettingsPersonal.php">
                     <i class="fa-solid fa-gear"></i>Settings
                 </a>
             </div>
@@ -393,7 +416,7 @@ $recentMatches = $db->query("
 
     <!-- Main Content -->
     <div class="main-content">
-        <h2>Welcome, Fazley!</h2>
+        <h2>Welcome, <?= $userDisplay['name'] ?>!</h2>
 
         <!-- Dashboard Metrics Section -->
         <div class="dashboard-metrics">
@@ -544,8 +567,8 @@ $recentMatches = $db->query("
 
     <!-- Footer -->
     <div class="footer">
-        <a href="../Homepages/AboutUs.html">About Us</a>
-        <a href="../Homepages/ContactUs.html">Contact Us</a>
+        <a href="../Homepages/AboutUs.php">About Us</a>
+        <a href="../Homepages/ContactUs.php">Contact Us</a>
     </div>
 
     <!-- Scripts -->

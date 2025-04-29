@@ -1,13 +1,32 @@
 <?php
-include_once __DIR__ . '/../Include/db.php'; // Path to db.php (which includes the Database class)
+session_start();
 
-// Instantiate the Database class to get the connection
-try {
-    $dbInstance = new Database();  // Instantiate the Database class
-    $conn = $dbInstance->getConnection(); // Get the connection
-} catch (Exception $e) {
-    die("Error: " . $e->getMessage());  // If there's an error, display a message and stop execution
+// Check if user is logged in - ADDED MISSING SESSION CHECK
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Create Account and Login/Login.php");
+    exit();
 }
+
+require_once '../Include/db.php';
+
+// Get user info - ADDED USER INFO FETCHING
+$user_id = $_SESSION['user_id'];
+$user_role = $_SESSION['user_role'] ?? 'Admin';
+
+// Database connection - CHANGED TO USE $conn CONSISTENTLY
+$dbInstance = new Database();
+$conn = $dbInstance->getConnection();
+
+// Get user details - ADDED USER DETAILS QUERY
+$userQuery = $conn->prepare("SELECT Firstname, Surname FROM User WHERE UserID = ?");
+$userQuery->bindValue(1, $user_id, SQLITE3_INTEGER);
+$userResult = $userQuery->execute();
+$userData = $userResult->fetchArray();
+
+$userDisplay = [
+    'name' => $userData ? htmlspecialchars($userData['Firstname'] . ' ' . $userData['Surname']) : 'Admin User',
+    'role' => htmlspecialchars($user_role)
+];
 ?>
 
 <?php
@@ -302,25 +321,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
-    <!-- Creates the Header at the top -->
+    <!-- Header -->
     <div class="header">
         <h2>Add Referee</h2>
         <div class="profile-box">
             <i class="fa fa-user"></i>
             <div>
-                <div class="name">Fazley</div>
-                <div class="role">Admin</div>
+                <div class="name"><?= htmlspecialchars($userDisplay['name']) ?></div>
+                <div class="role"><?= htmlspecialchars($userDisplay['role']) ?></div>
             </div>
             <i class="fa fa-chevron-down dropdown-icon"></i>
             <div class="dropdown">
                 <a href="#">Profile</a>
-                <a href="../Homepages/SettingsData.html">Manage Data</a>
+                <a href="../Homepages/SettingsData.php">Manage Data</a>
                 <a href="../Create Account and Login/Login.php">Sign Out</a>
             </div>
         </div>
     </div>
     
-    <!-- Creates the Sidebar on the left hand side -->
+    <!-- Sidebar -->
     <div class="sidebar">
         <img src="../GoikonLogoFinal.png" alt="Goikon Logo" class="goikon-logo">
 
@@ -335,7 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
             <div class="sidebar-toolbox-button">
-                <a href="../Homepages/SettingsPersonal.html">
+                <a href="../Homepages/SettingsPersonal.php">
                     <i class="fa-solid fa-gear"></i>Settings
                 </a>
             </div>
@@ -347,7 +366,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <!-- Creates Main Content area -->
+    <!-- Main Content -->
     <div class="player-content">
         <div class="player-form-wrapper">
             <h1>Add New Referee</h1>
@@ -403,8 +422,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <div class="footer">
-        <a href="../Homepages/AboutUs.html">About Us</a>
-        <a href="../Homepages/ContactUs.html">Contact Us</a>
+        <a href="../Homepages/AboutUs.php">About Us</a>
+        <a href="../Homepages/ContactUs.php">Contact Us</a>
     </div>
    
     <!-- JAVA script to change colour of sidebar button referring to active page-->
