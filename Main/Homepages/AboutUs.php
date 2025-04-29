@@ -1,6 +1,19 @@
 <?php
 include_once __DIR__ . '/../Include/db.php'; // Path to db.php (which includes the Database class)
 
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Create Account and Login/Login.php");
+    exit();
+}
+
+require_once '../Include/db.php';
+
+// Get user info
+$userID = $_SESSION['user_id'];
+
 // Instantiate the Database class to get the connection
 try {
     $dbInstance = new Database();  // Instantiate the Database class
@@ -8,9 +21,6 @@ try {
 } catch (Exception $e) {
     die("Error: " . $e->getMessage());  // If there's an error, display a message and stop execution
 }
-
-// Initialize variables for the form
-$userID = '8';
 
 // Fetch the current user's details from the database to prefill the form
 $sql = "SELECT *

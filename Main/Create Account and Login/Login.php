@@ -85,8 +85,8 @@ function loginUser($user) {
     <div class="sidebar-separator"></div>
 </div>
 <div class="footer">
-    <a href="AboutUs.html" class="stayOnPageLink">About Us</a>
-    <a href="ContactUs.html">Contact Us</a>
+    <a href="AboutUs.php" class="stayOnPageLink">About Us</a>
+    <a href="ContactUs.php">Contact Us</a>
 </div>
 
 <div class="main-content">
