@@ -54,7 +54,7 @@ function loginUser($user) {
             header("Location: ../Admin/Dashboard.php");
             break;
         case 'team manager':
-            header("Location: ../Team Manager/TeamOverview.html");
+            header("Location: ../Team Manager/TeamOverview.php");
             break;
         case 'player':
             header("Location: ../Player/PlayerOverview.php");

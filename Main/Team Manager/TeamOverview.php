@@ -58,7 +58,7 @@ $offset = ($page - 1) * $matchesPerPage;
 $queryMatches = "SELECT 
                     HomeTeam.TeamName AS HomeTeam, 
                     AwayTeam.TeamName AS AwayTeam, 
-                    League_Match.Result, 
+                    League_Match.HomeGoals || ' - ' || League_Match.AwayGoals AS Result, 
                     League_Match.MatchDate
                 FROM 
                     League_Match
@@ -67,7 +67,8 @@ $queryMatches = "SELECT
                 JOIN 
                     Team AS AwayTeam ON League_Match.AwayTeamID = AwayTeam.TeamID
                 WHERE 
-                    League_Match.LeagueID = 1
+                    League_Match.LeagueID = 1 AND
+                    League_Match.Status = 'Completed'
                 ORDER BY 
                     League_Match.MatchDate DESC
                 LIMIT $matchesPerPage OFFSET $offset";
@@ -96,6 +97,28 @@ for ($i = 1; $i <= $totalPages; $i++) {
     echo '<a href="?page=' . $i . '" class="' . ($i == $page ? 'active' : '') . '">' . $i . '</a>';
 }
 echo '</div>';
+
+$queryFixtures = "SELECT 
+                    HomeTeam.TeamName AS HomeTeam, 
+                    AwayTeam.TeamName AS AwayTeam, 
+                    League_Match.MatchDate
+                FROM 
+                    League_Match
+                JOIN 
+                    Team AS HomeTeam ON League_Match.HomeTeamID = HomeTeam.TeamID
+                JOIN 
+                    Team AS AwayTeam ON League_Match.AwayTeamID = AwayTeam.TeamID
+                WHERE 
+                    League_Match.Status = 'Scheduled'
+                ORDER BY 
+                    League_Match.MatchDate ASC
+                LIMIT 5";
+
+$resultFixtures = $conn->query($queryFixtures);
+$fixtures = [];
+while ($row = $resultFixtures->fetchArray(SQLITE3_ASSOC)) {
+    $fixtures[] = $row;
+}
 ?>
 
 <!DOCTYPE html>
@@ -126,23 +149,13 @@ echo '</div>';
         <!-- Creates buttons in the Sidebar -->
         <div class="sidebar-separator"></div>
         <div class="sidebar-button">
-            <a href="TeamOverview.html" class="stayOnPageLink">
+            <a href="TeamOverview.php" class="stayOnPageLink">
                 <i class="fa-solid fa-people-group"></i>Team Overview
             </a>
         </div>
         <div class="sidebar-button">
             <a href="RosterManagement.php">
                 <i class="fa-solid fa-user-plus"></i>Roster Management
-            </a>
-        </div>
-        <div class="sidebar-button">
-            <a href="MatchPreperation.html">
-                <i class="fa-solid fa-square-check"></i>Match Preperation
-            </a>
-        </div>
-        <div class="sidebar-button">
-            <a href="UpcomingMatches.html">
-                <i class="fa-solid fa-calendar"></i>Upcoming Matches
             </a>
         </div>
         <div class="sidebar-button">
@@ -509,46 +522,24 @@ echo '</div>';
         <h1> Team Overview </h1>
         <div class="dashboard">
             <div class="card"id="fixtures">
-                <div class="team-list-header">
-                    <h2>Upcoming Fixtures</h2>
-                </div>
+            <div class="team-list-header">
+                <h2>Upcoming Fixtures</h2>
+            </div>
 
                 <div class="scrollable-container">
                     <ul class="fixture-list">
-                        <a href="UpcomingMatches.html" class="fixture-list">
-                            <li class="fixture-list-item">
-                                    <div class="fixture-list-item-text-container">
-                                        <span>Charlie City vs Hotel FC</span>
-                                        <span class="match-date-time">April 9, 2025 - 17:00</span>
-                                        <div class="fixture-list-item-additional">
-                                            <span class="fixture-venue"><i class="fa-solid fa-location-dot"></i> Wembley Stadium</span>
-                                            <span class="fixture-competition"><i class="fa-solid fa-trophy"></i> Friendly</span>
-                                        </div>
-                                    </div>
-                            </li>
-
+                    <?php if (!empty($fixtures)): ?>
+                        <?php foreach ($fixtures as $row): ?>
                             <li class="fixture-list-item">
                                 <div class="fixture-list-item-text-container">
-                                    <span>Charlie City vs Hotel FC</span>
-                                    <span class="match-date-time">April 13, 2025 - 15:30</span>
-                                    <div class="fixture-list-item-additional">
-                                        <span class="fixture-venue"><i class="fa-solid fa-location-dot"></i> National Stadium</span>
-                                        <span class="fixture-competition"><i class="fa-solid fa-trophy"></i> League</span>
-                                    </div>
+                                    <span><?= htmlspecialchars($row['HomeTeam']) ?> vs <?= htmlspecialchars($row['AwayTeam']) ?></span>
+                                    <span class="match-date-time"><?= date("F j, Y - H:i", strtotime($row['MatchDate'])) ?></span>
                                 </div>
                             </li>
-
-                            <li class="fixture-list-item">
-                                <div class="fixture-list-item-text-container">
-                                    <span>Charlie City vs Hotel FC</span>
-                                    <span class="match-date-time">April 26, 2025 - 15:00</span>
-                                    <div class="fixture-list-item-additional">
-                                        <span class="fixture-venue"><i class="fa-solid fa-location-dot"></i> Reebok Stadium</span>
-                                        <span class="fixture-competition"><i class="fa-solid fa-trophy"></i> League</span>
-                                    </div>
-                                </div>
-                            </li>
-                        </a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <li class="fixture-list-item">No upcoming fixtures scheduled.</li>
+                    <?php endif; ?>
                     </ul>
                 </div>
             </div>

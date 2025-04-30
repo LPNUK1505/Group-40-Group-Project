@@ -112,23 +112,13 @@ if (isset($_GET['id'])) {
         <!-- Creates buttons in the Sidebar -->
         <div class="sidebar-separator"></div>
         <div class="sidebar-button">
-            <a href="TeamOverview.html">
+            <a href="TeamOverview.php">
                 <i class="fa-solid fa-people-group"></i>Team Overview
             </a>
         </div>
         <div class="sidebar-button">
             <a href="RosterManagement.php" class="stayOnPageLink">
                 <i class="fa-solid fa-user-plus"></i>Roster Management
-            </a>
-        </div>
-        <div class="sidebar-button">
-            <a href="MatchPreperation.html">
-                <i class="fa-solid fa-square-check"></i>Match Preperation
-            </a>
-        </div>
-        <div class="sidebar-button">
-            <a href="UpcomingMatches.html">
-                <i class="fa-solid fa-calendar"></i>Upcoming Matches
             </a>
         </div>
         <div class="sidebar-button">
