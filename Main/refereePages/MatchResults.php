@@ -1,11 +1,24 @@
-<?php include_once __DIR__ . '/../Include/profile_header.php'; ?>
 <!DOCTYPE html>
 <html>
     <!-- JAVA line for 'fontawesome' icons -->
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles.css">
     <!-- Creates the Header at the top -->
-   
+    <div class="header">
+        <div class="profile-box">
+            <i class="fa fa-user"></i>
+            <div>
+                <div class="name">John Doe</div>
+                <div class="role">Team Manager</div>
+            </div>
+            <i class="fa fa-chevron-down dropdown-icon"></i>
+            <div class="dropdown">
+                <a href="#">Profile</a>
+                <a href="../Homepages/SettingsData.php">Manage Data</a>
+                <a href="../Create Account and Login/Login.php">Sign Out</a>
+            </div>
+        </div>
+    </div>
     
     <!-- Creates the Sidebar on the left hand side -->
     <div class="sidebar">
