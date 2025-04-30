@@ -4,7 +4,7 @@
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles.css">
     <!-- Creates the Header at the top -->
-   
+  
     
     <!-- Creates the Sidebar on the left hand side -->
     <div class="sidebar">
@@ -674,3 +674,35 @@
             window.onload = preventPageRefresh;
         </script>
 </html>
+add the profile box like this:
+<div class="header">
+    <div class="profile-box">
+        <i class="fa fa-user"></i>
+        <div>
+            <div class="name">
+                <?php 
+                if (isset($_SESSION['user_id'])) {
+                    echo htmlspecialchars($userDisplay['name'] ?? 'Guest');
+                } else {
+                    echo 'Guest';
+                }
+                ?>
+            </div>
+            <div class="role">
+                <?php 
+                if (isset($_SESSION['user_id'])) {
+                    echo htmlspecialchars($userDisplay['role'] ?? 'Not Logged In');
+                } else {
+                    echo 'Not Logged In';
+                }
+                ?>
+            </div>
+        </div>
+        <i class="fa fa-chevron-down dropdown-icon"></i>
+        <div class="dropdown">
+            <a href="#">Profile</a>
+            <a href="../Homepages/SettingsData.html">Manage Data</a>
+            <a href="../Create Account and Login/Login.php">Sign Out</a>
+        </div>
+    </div>
+</div>

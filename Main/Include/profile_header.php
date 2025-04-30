@@ -47,7 +47,7 @@ try {
     }
 } catch (Exception $e) {
     error_log("Profile Header Error: " . $e->getMessage());
-    // Fail silently - will just show default "Guest" values
+    
 } finally {
     if ($dbInstance) $dbInstance->closeConnection();
 }
