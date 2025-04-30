@@ -21,12 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Password is correct (hashed)
                 loginUser($user);
             } 
-            // Temporary transition check - remove after all passwords are hashed
+            // Temporary transition check might remove maybe?
             elseif ($password === $user['Password']) {
-                // Plaintext match (temporary during transition)
+                // Plaintext match 
                 loginUser($user);
                 
-                // Optional: Upgrade to hashed password
+                // Optional: Upgrade to hashed password in the future if we are ready
                 $hashed = password_hash($password, PASSWORD_DEFAULT);
                 $upgradeStmt = $conn->prepare("UPDATE User SET Password = ? WHERE UserID = ?");
                 $upgradeStmt->bindValue(1, $hashed, SQLITE3_TEXT);

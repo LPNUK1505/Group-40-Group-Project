@@ -17,7 +17,7 @@ try {
     $dbInstance = new Database();
     $db = $dbInstance->getConnection();
     
-    // Add SQLite performance optimizations
+    // Added SQLite performance optimisations
     $db->exec("PRAGMA journal_mode = WAL");
     $db->exec("PRAGMA synchronous = NORMAL");
     
@@ -26,7 +26,7 @@ try {
     if (isset($_SESSION['user_id'])) {
         $userId = $_SESSION['user_id'];
         
-        // 1. Get user profile (optimized)
+        // 1. Get user profile 
         $stmt = $db->prepare("
             SELECT u.UserID, u.Firstname, u.Surname, u.AccountType, 
                    t.TeamID, t.TeamName, t.LeagueID
@@ -47,7 +47,7 @@ try {
                 $userDisplay['role'] .= " - " . $user['TeamName'];
             }
 
-            // 2. Get player stats (simplified)
+            // 2. Get player stats 
             if (strtolower($user['AccountType']) === 'player') {
                 $stmt = $db->prepare("
                     SELECT Appearances, Goals, Assists, YellowCards, RedCards, TeamName 
@@ -59,7 +59,7 @@ try {
                 $stmt->bindValue(':user_id', $userId, SQLITE3_INTEGER);
                 $player = $stmt->execute()->fetchArray(SQLITE3_ASSOC) ?: [];
 
-                // 3. Get team roster (limited)
+                // 3. Get team roster 
                 $stmt = $db->prepare("
                     SELECT p.PlayerID, u.Firstname || ' ' || u.Surname AS PlayerName, 
                            p.Goals, p.Assists
@@ -75,7 +75,7 @@ try {
                     $teamPlayers[] = $row;
                 }
 
-                // 4. Get recent matches (limited)
+                // 4. Get recent matches 
                 $stmt = $db->prepare("
                     SELECT 
                         t1.TeamName AS HomeTeam, 
@@ -98,7 +98,7 @@ try {
                 }
 
     // upcoming matches 
-    $upcoming = []; // Initialize empty array
+    $upcoming = []; // Initialise empty array
 
     if (!empty($user['TeamID'])) {
         $stmt = $db->prepare("
@@ -326,7 +326,7 @@ try {
     </style>
 </head>
 <body class="dashboard-page">
-    <!-- Header Section - Keep exactly the same as original -->
+    <!-- Header Section -->
     <div class="header">
         <div class="profile-box">
             <i class="fa fa-user"></i>
@@ -337,13 +337,13 @@ try {
             <i class="fa fa-chevron-down dropdown-icon"></i>
             <div class="dropdown">
                 <a href="#">Profile</a>
-                <a href="../Homepages/SettingsData.html">Manage Data</a>
+                <a href="../Homepages/SettingsData.php">Manage Data</a>
                 <a href="../Create Account and Login/Login.php">Sign Out</a>
             </div>
         </div>
     </div>
     
-    <!-- Sidebar - Keep exactly the same as original -->
+   
     <div class="sidebar">
         <img src="../GoikonLogoFinal.png" alt="Goikon Logo" class="goikon-logo">
         <div class="sidebar-separator"></div>
@@ -367,13 +367,13 @@ try {
         </div>
     </div>
     
-    <!-- Footer - Keep exactly the same as original -->
+    
     <div class="footer">
         <a href="../Homepages/AboutUs.html">About Us</a>
         <a href="../Homepages/ContactUs.html">Contact Us</a>
     </div>
     
-    <!-- Main Content - Updated to match Admin style -->
+    
     <div class="main-content">
         <h1>Player Overview</h1>
         

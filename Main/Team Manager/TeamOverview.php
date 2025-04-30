@@ -1,3 +1,4 @@
+<?php include_once __DIR__ . '/../Include/profile_header.php'; ?>
 <?php
 include_once __DIR__ . '/../Include/db.php';
 
@@ -127,21 +128,7 @@ while ($row = $resultFixtures->fetchArray(SQLITE3_ASSOC)) {
     <script src="https://kit.fontawesome.com/d15bb23cbb.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles.css">
     <!-- Creates the Header at the top -->
-    <div class="header">
-        <div class="profile-box">
-            <i class="fa fa-user"></i>
-            <div>
-                <div class="name">John Doe</div>
-                <div class="role">Team Manager</div>
-            </div>
-            <i class="fa fa-chevron-down dropdown-icon"></i>
-            <div class="dropdown">
-                <a href="#">Profile</a>
-                <a href="../Homepages/SettingsData.html">Manage Data</a>
-                <a href="../Create Account and Login/Login.php">Sign Out</a>
-            </div>
-        </div>
-    </div>
+    <?php include_once __DIR__ . '/../Include/profile_header.php'; ?>
     
     <!-- Creates the Sidebar on the left hand side -->
     <div class="sidebar">
@@ -166,7 +153,7 @@ while ($row = $resultFixtures->fetchArray(SQLITE3_ASSOC)) {
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
             <div class="sidebar-toolbox-button">
-                <a href="../Homepages/SettingsPersonal.html">
+                <a href="../Homepages/SettingsPersonal.php">
                     <i class="fa-solid fa-gear"></i>Settings
                 </a>
             </div>
@@ -180,8 +167,8 @@ while ($row = $resultFixtures->fetchArray(SQLITE3_ASSOC)) {
     <!-- Creates the Footer at the bottom -->
     <div class="footer">
         <!-- Creates buttons in the footer -->
-        <a href="../Homepages/AboutUs.html">About Us</a>
-        <a href="../Homepages/ContactUs.html">Contact Us</a>
+        <a href="../Homepages/AboutUs.php">About Us</a>
+        <a href="../Homepages/ContactUs.php">Contact Us</a>
     </div>
 
     <!-- Creates Main Content area -->
