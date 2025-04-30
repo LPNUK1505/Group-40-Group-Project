@@ -75,7 +75,7 @@
     }
 
     .team-list-header h2 {
-        color: #3399ff; /* lighter blue title */
+        color: #3399ff; 
         text-align: center;
         margin-bottom: 20px;
     }
@@ -87,18 +87,18 @@
     }
 
     .fixture-card {
-        background-color: #062c50; /* Dark navy card */
-        border: 1px solid #114d8a; /* Subtle blue border */
+        background-color: #062c50;
+        border: 1px solid #114d8a;
         border-radius: 12px;
-        padding: 25px;  /* Increased padding for bigger cards */
+        padding: 25px;
         box-shadow: 0 4px 8px rgba(0, 86, 179, 0.3);
         transition: transform 0.3s, box-shadow 0.3s;
-        color: #ffffff; /* Bright white text */
-        font-size: 16px;  /* Larger font size for better readability */
+        color: #ffffff; 
+        font-size: 16px;
         height: auto;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;  /* Ensure height adjusts based on content */
+        justify-content: space-between;
     }
 
     .fixture-card:hover {
@@ -106,63 +106,59 @@
         box-shadow: 0 8px 16px rgba(51, 153, 255, 0.5);
     }
 
-    /* Cards Grid Adjustments: Increase the card size */
     .cards-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 1fr);/* Make cards bigger */
-        gap: 30px;  /* Larger gap between cards */
+        grid-template-rows: repeat(2, 1fr);
+        gap: 30px;  
         height: calc(100% - 100px);
         overflow: hidden;
     }
 
-    /* Home and Away Teams */
+
     .fixture-teams {
-        font-size: 20px;  /* Larger font size for better readability */
+        font-size: 20px; 
         font-weight: bold;
-        color: #66ccff;   /* Light blue for team names */
+        color: #66ccff;  
         margin-bottom: 15px;
-        display: flex;  /* Use flexbox to align items in a row */
-        justify-content: center; /* Center the content horizontally */
-        align-items: center; /* Align the items vertically */
+        display: flex;  
+        justify-content: center; 
+        align-items: center; 
     }
     .fixture-teams span {
-        white-space: nowrap;  /* Prevents the text from wrapping onto a new line */
+        white-space: nowrap;
     }
 
     .fixture-teams .home-team {
-        margin-right: 10px; /* Space between home team and VS icon */
-        color: #ff6600;  /* Orange color for home team label */
+        margin-right: 10px; 
+        color: #ff6600;
     }
 
     .fixture-teams .away-team {
         margin-left: 10px;
-        color: #00cc99;  /* Green color for away team label */
+        color: #00cc99; 
     }
 
     .fixture-teams i {
-        font-size: 22px; /* Set icon size */
-        color: #ffffff;  /* White color for the VS icon */
-        margin: 0 10px;  /* Space on both sides of the icon */
+        font-size: 22px; 
+        color: #ffffff; 
+        margin: 0 10px;  
     }
 
-    /* Date and Stadium Styling */
     .fixture-date, .fixture-stadium {
         font-size: 14px;
-        color: #cce6ff; /* Light blue color for date and stadium */
-        margin-top: 10px; /* Space above these elements */
-        text-align: center;  /* Center align the date and stadium */
+        color: #cce6ff; 
+        margin-top: 10px; 
+        text-align: center; 
     }
 
-    /* Ensure the stadium icon is properly styled */
     .fixture-stadium i {
         margin-right: 5px;
-        color: #66ccff;  /* Light blue color for the icon */
+        color: #66ccff;  
     }
 
-    /* Pagination Buttons */
     .pagination-buttons {
-        margin-top: 30px;  /* Add some space between cards and pagination */
+        margin-top: 30px; 
         text-align: center;
     }
 
@@ -170,11 +166,11 @@
         background-color: #0056b3;
         color: white;
         border: none;
-        padding: 12px 25px;  /* Bigger button size */
-        margin: 0 10px;  /* Space between buttons */
+        padding: 12px 25px;
+        margin: 0 10px;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 18px;  /* Larger font size */
+        font-size: 18px; 
         transition: background-color 0.3s;
     }
 
@@ -224,7 +220,6 @@ window.onload = function() {
         }
     });
 
-    // Initialize the display on page load
     showPage(currentPage);
 };
 
@@ -279,7 +274,7 @@ window.onload = function() {
                     <div class="fixture-card">
                         <h3 class="fixture-teams">
                             <span class="home-team"><?php echo htmlspecialchars($row['HomeTeam']); ?></span>
-                            <i class="fa-solid fa-v"></i> <!-- FontAwesome VS icon -->
+                            <i class="fa-solid fa-v"></i> 
                             <span class="away-team"><?php echo htmlspecialchars($row['AwayTeam']); ?></span>
                         </h3>
                         <p class="fixture-date">

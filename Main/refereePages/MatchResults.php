@@ -69,7 +69,6 @@
     </div>
 
     <style>
-    /* Cards */
     .card-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -93,25 +92,46 @@
     }
 
     .result {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
-        margin-bottom: 10px;
-        background: #114d8a;
-        padding: 8px 10px;
-        border-radius: 8px;
+        gap: 10px;
+        margin: 10px 0;
+    }
+    
+    .result-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #ddd;
     }
 
-    .result span {
-        font-size: 16px;
+    .team {
         font-weight: bold;
+        text-align: center;
+        padding: 5px;
     }
 
-    .result .winner {
-        color: #66ff66;
+    .home {
+        text-align: right; 
     }
 
-    /* Modal */
+    .away {
+        text-align: left;
+    }
+
+    .score {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        min-width: 60px;
+    }
+
+    .winner {
+        color: #4CAF50; 
+    }
+
     #addNotesModal {
         display: none;
         position: fixed;
@@ -142,21 +162,27 @@
         color:rgb(0, 0, 0);
     }
 
-    /* Add Notes button */
+    .notes-button {
+        flex: 1;
+        text-align: right;
+    }
+
     .add-notes-btn {
-        align-self: flex-end;
-        background-color: #0056b3;
+        padding: 4px 8px;
+        background-color: #007bff;
         color: white;
         border: none;
-        padding: 6px 10px;
-        border-radius: 8px;
+        border-radius: 4px;
         cursor: pointer;
-        font-size: 14px;
-        margin-left: 10px;
     }
 
     .add-notes-btn:hover {
-        background-color: #003d80;
+        background-color: #0056b3;
+    }
+
+    .winner {
+        color: green;
+        font-weight: bold;
     }
     </style>
 
@@ -202,13 +228,14 @@
                 $winnerAway = $awayGoals > $homeGoals ? 'winner' : '';
 
                 echo "<div class='result'>
-                        <span class='$winnerHome'>{$homeTeam} {$homeGoals}</span>
-                        <span>-</span>
-                        <span class='$winnerAway'>{$awayGoals} {$awayTeam}</span>
+                        <div class='team home $winnerHome'>{$homeTeam}</div>
+                        <div class='score'>{$homeGoals} - {$awayGoals}</div>
+                        <div class='team away $winnerAway'>{$awayTeam}</div>
                     </div>";
             }
             ?>
         </div>
+
 
         <!-- La Liga Results -->
         <div class="card">
@@ -236,9 +263,9 @@
                 $winnerAway = $awayGoals > $homeGoals ? 'winner' : '';
 
                 echo "<div class='result'>
-                        <span class='$winnerHome'>{$homeTeam} {$homeGoals}</span>
-                        <span>-</span>
-                        <span class='$winnerAway'>{$awayGoals} {$awayTeam}</span>
+                        <div class='team home $winnerHome'>{$homeTeam}</div>
+                        <div class='score'>{$homeGoals} - {$awayGoals}</div>
+                        <div class='team away $winnerAway'>{$awayTeam}</div>
                     </div>";
             }
             ?>
@@ -271,20 +298,20 @@
                 $winnerHome = $homeGoals > $awayGoals ? 'winner' : '';
                 $winnerAway = $awayGoals > $homeGoals ? 'winner' : '';
 
-                echo "<div class='result'>
-                        <span class='$winnerHome'>{$homeTeam} {$homeGoals}</span>
-                        <span>-</span>
-                        <span class='$winnerAway'>{$awayGoals} {$awayTeam}</span>
-                        <button class='add-notes-btn' data-matchid='{$leagueMatchID}'>Add Notes</button>
+                echo "<div class='result-row'>
+                        <div class='team home $winnerHome'>{$homeTeam}</div>
+                        <div class='score'>{$homeGoals} - {$awayGoals}</div>
+                        <div class='team away $winnerAway'>{$awayTeam}</div>
+                        <div class='notes-button'>
+                            <button class='add-notes-btn' data-matchid='{$leagueMatchID}'>Add Notes</button>
+                        </div>
                     </div>";
             }
             ?>
         </div>
 
-        </div>
-
         <!-- Modal for Add Notes -->
-        <div id="addNotesModal">
+        <div id="addNotesModal" style="display:none;">
             <form id="addNotesForm" method="POST" action="save_notes.php">
                 <h3>Add Match Notes</h3>
                 <input type="hidden" name="referee_id" value="3">
@@ -304,6 +331,7 @@
                 <button type="button" onclick="closeModal()">Cancel</button>
             </form>
         </div>
+
         <?php
         $dbInstance->closeConnection();
         ?>
