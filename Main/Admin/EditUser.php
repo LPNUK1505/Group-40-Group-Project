@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Check if user is logged in - ADDED MISSING SESSION CHECK
+// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Create Account and Login/Login.php");
     exit();
@@ -9,15 +9,15 @@ if (!isset($_SESSION['user_id'])) {
 
 require_once '../Include/db.php';
 
-// Get user info - ADDED USER INFO FETCHING
+// Get user info
 $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['user_role'] ?? 'Admin';
 
-// Database connection - CHANGED TO USE $conn CONSISTENTLY
+// Database connection
 $dbInstance = new Database();
 $conn = $dbInstance->getConnection();
 
-// Get user details - ADDED USER DETAILS QUERY
+// Get user details
 $userQuery = $conn->prepare("SELECT Firstname, Surname FROM User WHERE UserID = ?");
 $userQuery->bindValue(1, $user_id, SQLITE3_INTEGER);
 $userResult = $userQuery->execute();
@@ -67,9 +67,7 @@ $nationality = $row['Nationality'];
 $phoneNumber = $row['PhoneNumber'];
 $email = $row['Email'];
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $roleId = trim($_POST['role_id']);
     $accountType = trim($_POST['account_type']);
     $firstname = trim($_POST['firstname']);
@@ -80,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phoneNumber = trim($_POST['phone_number']);
     $email = trim($_POST['email']);
 
-    
     if (empty($firstname) || empty($surname) || empty($username) || empty($email)) {
         $error = "Required fields are missing!";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -263,8 +260,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100%;
         }
     }
-</style>
-
+    </style>
 </head>
 <body>
     <div class="header">
@@ -319,35 +315,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             
-            <label for="account_type">Account Type:</label>
-<select id="account_type" name="account_type" required>
-    <option value="Player" <?php echo $accountType == 'Player' ? 'selected' : ''; ?>>Player</option>
-    <option value="Team Manager" <?php echo $accountType == 'Team Manager' ? 'selected' : ''; ?>>Team Manager</option>
-    <option value="Referee" <?php echo $accountType == 'Referee' ? 'selected' : ''; ?>>Referee</option>
-    <option value="Admin" <?php echo $accountType == 'Admin' ? 'selected' : ''; ?>>Admin</option>
-</select>
-
+            <form method="POST" action="">
+                <div class="form-group">
+                    <label for="role_id">Role ID:</label>
+                    <input type="number" id="role_id" name="role_id" value="<?php echo htmlspecialchars($roleId); ?>" required>
+                </div>
                 
-                <label for="firstname">First Name:</label>
-                <input type="text" id="firstname" name="firstname" value="<?php echo htmlspecialchars($firstname); ?>" required>
+                <div class="form-group">
+                    <label for="account_type">Account Type:</label>
+                    <select id="account_type" name="account_type" required>
+                        <option value="Player" <?php echo $accountType == 'Player' ? 'selected' : ''; ?>>Player</option>
+                        <option value="Team Manager" <?php echo $accountType == 'Team Manager' ? 'selected' : ''; ?>>Team Manager</option>
+                        <option value="Referee" <?php echo $accountType == 'Referee' ? 'selected' : ''; ?>>Referee</option>
+                        <option value="Admin" <?php echo $accountType == 'Admin' ? 'selected' : ''; ?>>Admin</option>
+                    </select>
+                </div>
                 
-                <label for="surname">Surname:</label>
-                <input type="text" id="surname" name="surname" value="<?php echo htmlspecialchars($surname); ?>" required>
+                <div class="form-group">
+                    <label for="firstname">First Name:</label>
+                    <input type="text" id="firstname" name="firstname" value="<?php echo htmlspecialchars($firstname); ?>" required>
+                </div>
                 
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
+                <div class="form-group">
+                    <label for="surname">Surname:</label>
+                    <input type="text" id="surname" name="surname" value="<?php echo htmlspecialchars($surname); ?>" required>
+                </div>
                 
-                <label for="date_of_birth">Date of Birth:</label>
-                <input type="date" id="date_of_birth" name="date_of_birth" value="<?php echo htmlspecialchars($dateOfBirth); ?>">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
+                </div>
                 
-                <label for="nationality">Nationality:</label>
-                <input type="text" id="nationality" name="nationality" value="<?php echo htmlspecialchars($nationality); ?>">
+                <div class="form-group">
+                    <label for="date_of_birth">Date of Birth:</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth" value="<?php echo htmlspecialchars($dateOfBirth); ?>">
+                </div>
                 
-                <label for="phone_number">Phone Number:</label>
-                <input type="tel" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($phoneNumber); ?>">
+                <div class="form-group">
+                    <label for="nationality">Nationality:</label>
+                    <input type="text" id="nationality" name="nationality" value="<?php echo htmlspecialchars($nationality); ?>">
+                </div>
                 
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+                <div class="form-group">
+                    <label for="phone_number">Phone Number:</label>
+                    <input type="tel" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($phoneNumber); ?>">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+                </div>
                 
                 <div class="form-actions">
                     <a href="Users.php" class="btn btn-cancel">Cancel</a>
