@@ -1,3 +1,103 @@
+<?php
+include_once __DIR__ . '/../Include/db.php';
+
+try {
+    $dbInstance = new Database();
+    $conn = $dbInstance->getConnection();
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());
+}
+
+// SQL to get player names and stats
+$query = "SELECT 
+            Team.TeamName,
+            Premier_League_Standings.GamesPlayed,
+            Premier_League_Standings.GoalDifference,
+            Premier_League_Standings.Points
+        FROM Premier_League_Standings
+        JOIN Team ON Premier_League_Standings.TeamID = Team.TeamID
+        ORDER BY Premier_League_Standings.Points DESC, Premier_League_Standings.GoalDifference DESC, Premier_League_Standings.GamesPlayed DESC";
+
+// Debugging: Print the query to ensure it's correct
+echo "Running query: <br><pre>$query</pre><br>";
+
+// Execute the query
+$result = $conn->query($query);
+
+// Check if query was successful
+if ($result) {
+    echo "Query executed successfully.<br>";
+} else {
+    echo "Error executing query: " . $conn->lastErrorMsg() . "<br>";
+}
+
+// Initialize an array to hold the standings
+$standings = [];
+
+// Check if result is not empty and loop to fetch the data
+while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+    // Debugging: Print each row fetched
+    echo "<pre>Fetched Row: ";
+    print_r($row);
+    echo "</pre>";
+    
+    $standings[] = $row;
+}
+
+
+// Check if standings array is populated
+if (empty($standings)) {
+    echo "No standings found.<br>";
+} else {
+    echo "Standings have been successfully populated.<br>";
+}
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$matchesPerPage = 5;
+$offset = ($page - 1) * $matchesPerPage;
+
+$queryMatches = "SELECT 
+                    HomeTeam.TeamName AS HomeTeam, 
+                    AwayTeam.TeamName AS AwayTeam, 
+                    League_Match.Result, 
+                    League_Match.MatchDate
+                FROM 
+                    League_Match
+                JOIN 
+                    Team AS HomeTeam ON League_Match.HomeTeamID = HomeTeam.TeamID
+                JOIN 
+                    Team AS AwayTeam ON League_Match.AwayTeamID = AwayTeam.TeamID
+                WHERE 
+                    League_Match.LeagueID = 1
+                ORDER BY 
+                    League_Match.MatchDate DESC
+                LIMIT $matchesPerPage OFFSET $offset";
+
+$resultMatches = $conn->query($queryMatches);
+
+$matches = [];
+if ($resultMatches->num_rows > 0) {
+    // Fetch results into the $matches array
+    while ($row = $resultMatches->fetchArray(SQLITE3_ASSOC)) {
+        $matches[] = $row;
+    }
+} else {
+    echo "No recent matches found.";
+}
+
+// Count total number of matches to calculate total pages
+$totalMatchesQuery = "SELECT COUNT(*) as totalMatches FROM League_Match WHERE LeagueID = 1";
+$totalMatchesResult = $conn->query($totalMatchesQuery);
+$totalMatches = $totalMatchesResult->fetchArray(SQLITE3_ASSOC)['totalMatches'];
+$totalPages = ceil($totalMatches / $matchesPerPage);
+
+// Display pagination
+echo '<div class="pagination">';
+for ($i = 1; $i <= $totalPages; $i++) {
+    echo '<a href="?page=' . $i . '" class="' . ($i == $page ? 'active' : '') . '">' . $i . '</a>';
+}
+echo '</div>';
+?>
+
 <!DOCTYPE html>
  <html>
     <!-- JAVA line for 'fontawesome' icons -->
@@ -53,7 +153,7 @@
         <div class="sidebar-toolbox-container">
             <div class="sidebar-separator"></div>
             <div class="sidebar-toolbox-button">
-                <a href="../Homepages/SettingsPersonal.php">
+                <a href="../Homepages/SettingsPersonal.html">
                     <i class="fa-solid fa-gear"></i>Settings
                 </a>
             </div>
@@ -67,8 +167,8 @@
     <!-- Creates the Footer at the bottom -->
     <div class="footer">
         <!-- Creates buttons in the footer -->
-        <a href="../Homepages/AboutUs.php">About Us</a>
-        <a href="../Homepages/ContactUs.php">Contact Us</a>
+        <a href="../Homepages/AboutUs.html">About Us</a>
+        <a href="../Homepages/ContactUs.html">Contact Us</a>
     </div>
 
     <!-- Creates Main Content area -->
@@ -76,9 +176,9 @@
         <style>
             .dashboard {
                 display: grid;
-                grid-template-columns: repeat(12, 1fr);
-                grid-template-rows: repeat(4, 1fr);
-                height: calc(100% - 100px);
+                grid-template-columns: 3fr 3fr 3fr 3fr;
+                grid-template-rows: auto auto;
+                height: auto;
                 gap: 15px;
                 padding: 5px 15px 15px 15px;
                 box-sizing: border-box;
@@ -86,28 +186,28 @@
             }
 
             #standings { 
-                grid-column: span 3;
-                grid-row: span 4;
+                grid-column: 1 / 2;
+                grid-row: 1 / 3;
             }
 
             #friendly {
-                grid-column: span 3;
-                grid-row: span 2;
+                grid-column: 2 / 3;
+                grid-row: 1;
             }
 
             #recent-matches {
-                grid-column: span 3;
-                grid-row: span 2;
+                grid-column: 3 / 4;
+                grid-row: 1;
             }
 
             #squad-summary {
-                grid-column: span 3;
-                grid-row: span 2;
+                grid-column: 4 / 5;
+                grid-row: 1;
             }
 
             #fixtures {
-                grid-column: 4 / 13;
-                grid-row: 3 / 5;
+                grid-column: 2 / 5;
+                grid-row: 2;
             }
 
             .card {
@@ -122,6 +222,8 @@
                 overflow: hidden;
                 border: 3px solid #044D8C;
                 transition: transform 0.3s ease, box-shadow 0.3s ease;
+                min-width: 0;
+                min-height: 0;
             }
 
             .card:hover {
@@ -140,6 +242,7 @@
 
             .scrollable-container {
                 overflow-y: auto;
+                max-height: 100%;
             }
 
             .scrollable-container::-webkit-scrollbar {
@@ -156,6 +259,9 @@
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                 border-radius: 10px;
                 overflow: hidden;
+                width: 100%;
+                table-layout: fixed;
+
             }
 
             .squad-summary-table th {
@@ -376,6 +482,28 @@
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
             }
 
+            .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            gap: 8px;
+            }
+
+            .pagination a {
+                color: white;
+                background-color: #044D8C;
+                padding: 6px 12px;
+                border-radius: 5px;
+                text-decoration: none;
+                transition: background-color 0.3s ease;
+            }
+
+            .pagination a.active,
+            .pagination a:hover {
+                background-color: #0271A1;
+                font-weight: bold;
+            }
+
         </style>
 
         <h1> Team Overview </h1>
@@ -432,22 +560,31 @@
 
                 <div class="scrollable-container">
                     <table>
-                        <tr><th>Pos</th><th>Team</th><th>Pl</th><th>GD</th><th>Pts</th></tr>
-                        <tr><td>1</td><td>Alpha FC</td><td>10</td><td>+15</td><td>30</td></tr>
-                        <tr><td>2</td><td>Bravo United</td><td>10</td><td>+12</td><td>28</td></tr>
-                        <tr><td>3</td><td>Charlie City</td><td>10</td><td>+9</td><td>24</td></tr>
-                        <tr><td>4</td><td>Delta Rovers</td><td>10</td><td>+8</td><td>22</td></tr>
-                        <tr><td>5</td><td>Echo Town</td><td>10</td><td>+7</td><td>20</td></tr>
-                        <tr><td>6</td><td>Foxtrot United</td><td>10</td><td>+5</td><td>18</td></tr>
-                        <tr><td>7</td><td>Golf Rangers</td><td>10</td><td>+3</td><td>16</td></tr>
-                        <tr><td>8</td><td>Hotel FC</td><td>10</td><td>+1</td><td>14</td></tr>
-                        <tr><td>9</td><td>India Tigers</td><td>10</td><td>-1</td><td>12</td></tr>
-                        <tr><td>10</td><td>Juliet Eagles</td><td>10</td><td>-3</td><td>10</td></tr>
-                        <tr><td>11</td><td>Kilo Wanderers</td><td>10</td><td>-5</td><td>8</td></tr>
-                        <tr><td>12</td><td>Lima United</td><td>10</td><td>-7</td><td>6</td></tr>
-                        <tr><td>13</td><td>Mike City</td><td>10</td><td>-9</td><td>4</td></tr>
-                        <tr><td>14</td><td>November FC</td><td>10</td><td>-12</td><td>2</td></tr>
-                        <tr><td>15</td><td>Oscar Knights</td><td>10</td><td>-15</td><td>0</td></tr>
+                        <thead>
+                            <th>POS</th>
+                            <th>TEAM</th>
+                            <th>PL</th>
+                            <th>GD</th>
+                            <th>PTS</th>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if (count($standings) > 0) {
+                                $position = 1;
+                                foreach ($standings as $row) {
+                                    echo "<tr>";
+                                    echo "<td>" . $position++ . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['TeamName']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['GamesPlayed']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['GoalDifference']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['Points']) . "</td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='5'>No standings found.</td></tr>";
+                            }
+                            ?>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -506,50 +643,50 @@
                 <div class="team-list-header">
                     <h2>Recent Matches</h2>
                 </div>
-
-                <div class="scrollable-container">
-                    <ul class="team-list">
-                        <li class="team-list-item">
-                            <div class="team-list-item-text-container">
-                                <div class="match-info">
-                                    <span class="match-details">vs Golf Rangers</span>
-                                    <span class="match-score win">3 - 1</span>
-                                </div>
-                                <span class="match-date-time">March 29, 2025</span>
-                            </div>
-                        </li>
-
-                        <li class="team-list-item">
-                            <div class="team-list-item-text-container">
-                                <div class="match-info">
-                                    <span class="match-details">vs Echo Town</span>
-                                    <span class="match-score draw">2 - 2</span>
-                                </div>
-                                <span class="match-date-time">March 26, 2025</span>
-                            </div>
-                        </li>
-
-                        <li class="team-list-item">
-                            <div class="team-list-item-text-container">
-                                <div class="match-info">
-                                    <span class="match-details">vs Alpha FC</span>
-                                    <span class="match-score win">1 - 0</span>
-                                </div>
-                                <span class="match-date-time">March 22, 2025</span>
-                            </div>
-                        </li>
-
-                        <li class="team-list-item">
-                            <div class="team-list-item-text-container">
-                                <div class="match-info">
-                                    <span class="match-details">vs Mike City</span>
-                                    <span class="match-score lose">0 - 2</span>
-                                </div>
-                                <span class="match-date-time">March 19, 2025</span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                    <div class="scrollable-container">
+                        <ul class="team-list">
+                            <?php
+                                $row = $resultMatches->fetchArray(SQLITE3_ASSOC); // Fetch the first row to check if data exists
+                                if ($row) {
+                                    do {
+                                        // Extract match details
+                                        $homeTeam = htmlspecialchars($row['HomeTeam']);
+                                        $awayTeam = htmlspecialchars($row['AwayTeam']);
+                                        $result = htmlspecialchars($row['Result']);
+                                        $matchDate = date("F j, Y", strtotime($row['MatchDate'])); // Formatting date
+                    
+                                        // Determine match outcome
+                                        $matchScoreClass = "";
+                                        if (strpos($result, "win") !== false) {
+                                            $matchScoreClass = "win";
+                                        } elseif (strpos($result, "draw") !== false) {
+                                            $matchScoreClass = "draw";
+                                        } else {
+                                            $matchScoreClass = "lose";
+                                        }
+                    
+                                        // Display match
+                                        echo "<li class='team-list-item'>
+                                                <div class='team-list-item-text-container'>
+                                                    <div class='match-info'>
+                                                        <span class='match-details'>vs $awayTeam</span>
+                                                        <span class='match-score $matchScoreClass'>$result</span>
+                                                    </div>
+                                                    <span class='match-date-time'>$matchDate</span>
+                                                </div>
+                                              </li>";
+                                    } while ($row = $resultMatches->fetchArray(SQLITE3_ASSOC)); // Continue fetching next row
+                                } else {
+                                    echo "<li class='team-list-item'><div class='team-list-item-text-container'><span>No recent matches found.</span></div></li>";
+                                }
+                            ?>
+                        </ul>
+                        <div class="pagination">
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <a href="?page=<?= $i ?>" class="<?= ($i == $page) ? 'active' : '' ?>"><?= $i ?></a>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
             </div>
 
             <div class="card" id="squad-summary">
